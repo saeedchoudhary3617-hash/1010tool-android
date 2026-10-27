@@ -4163,43 +4163,7 @@
                     </div>
                 </div>
 
-                <!-- Section 4: Release & APK Package -->
-                <div class="settings-section-card">
-                    <div class="settings-section-title">
-                        <svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Release & APK Package
-                    </div>
-                    <div class="settings-row">
-                        <div class="settings-info">
-                            <div class="settings-label">Application Package ID</div>
-                            <div class="settings-desc" id="settingsAppPackageId" style="font-family: var(--font-mono); font-size: 0.78rem;">com.aistudio.tententool.utility</div>
-                        </div>
-                        <div class="settings-control">
-                            <span class="settings-pill-badge" id="settingsBuildModeBadge">Production Ready</span>
-                        </div>
-                    </div>
-                    <div class="settings-row">
-                        <div class="settings-info">
-                            <div class="settings-label">AdMob Monetization</div>
-                            <div class="settings-desc" id="settingsAdMobUnitsDesc">Banner &amp; Interstitial production units configured (`ca-app-pub-5272800200175412~8920229976`)</div>
-                        </div>
-                        <div class="settings-control">
-                            <span class="settings-pill-badge" style="color: var(--success); border-color: var(--success);">Active</span>
-                        </div>
-                    </div>
-                    <div class="settings-row">
-                        <div class="settings-info">
-                            <div class="settings-label">Direct APK &amp; GitHub Release</div>
-                            <div class="settings-desc">Push to GitHub from AI Studio top-right menu to trigger automated `.apk` &amp; `.aab` release links</div>
-                        </div>
-                        <div class="settings-control">
-                            <button type="button" class="settings-btn-action" onclick="copyBuildReleaseSummary()" aria-label="Copy build and AdMob release summary">
-                                <svg class="icon-svg" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Info
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Section 5: About & System Info -->
+                <!-- Section 4: About & System Info -->
                 <div class="settings-section-card">
                     <div class="settings-section-title">
                         <svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg> About
@@ -4210,7 +4174,7 @@
                             <div class="settings-desc">High-speed offline-first PDF, Image, Converter and Developer utilities</div>
                         </div>
                         <div class="settings-control">
-                            <span id="settingsAppVersionText" style="font-size: 0.82rem; font-weight: 600; font-family: 'JetBrains Mono', monospace; color: var(--text-muted);">v1.0 (Code 1)</span>
+                            <span style="font-size: 0.82rem; font-weight: 600; font-family: 'JetBrains Mono', monospace; color: var(--text-muted);">v2.4.0</span>
                         </div>
                     </div>
                 </div>
@@ -5595,63 +5559,11 @@
                     const savedHaptic = localStorage.getItem('haptic_enabled');
                     hapticToggle.checked = savedHaptic !== 'false';
                 }
-
-                if (window.AndroidBridge && typeof window.AndroidBridge.getBuildReleaseInfo === 'function') {
-                    const rawInfo = window.AndroidBridge.getBuildReleaseInfo();
-                    if (rawInfo) {
-                        const info = JSON.parse(rawInfo);
-                        const pkgEl = document.getElementById('settingsAppPackageId');
-                        const verEl = document.getElementById('settingsAppVersionText');
-                        const modeEl = document.getElementById('settingsBuildModeBadge');
-                        if (pkgEl && info.applicationId) pkgEl.innerText = info.applicationId;
-                        if (verEl && info.versionName) verEl.innerText = `v${info.versionName} (Code ${info.versionCode || 1})`;
-                        if (modeEl && info.buildType) {
-                            modeEl.innerText = info.buildType.indexOf('RELEASE') === 0 ? 'Release Build' : 'Preview / Debug';
-                        }
-                    }
-                }
             } catch (e) {
                 console.warn('syncSettingsUIState note:', e);
             }
         }
         window.syncSettingsUIState = syncSettingsUIState;
-
-        function copyBuildReleaseSummary() {
-            try {
-                let summary = [
-                    '1010Tool Android Release Configuration',
-                    'Package ID: com.aistudio.tententool.utility',
-                    'Version: 1.0 (versionCode 1)',
-                    'AdMob App ID: ca-app-pub-5272800200175412~8920229976',
-                    'Banner Ad Unit: ca-app-pub-5272800200175412/4688633088',
-                    'Interstitial Ad Unit: ca-app-pub-5272800200175412/4141838179',
-                    'GitHub Actions Workflow: .github/workflows/android-release.yml (auto-publishes 1010Tool-release-signed.apk & 1010Tool-release.aab)'
-                ].join('\n');
-
-                if (window.AndroidBridge && typeof window.AndroidBridge.getBuildReleaseInfo === 'function') {
-                    const info = JSON.parse(window.AndroidBridge.getBuildReleaseInfo());
-                    summary = [
-                        '1010Tool Android Release Configuration',
-                        `Package ID: ${info.applicationId}`,
-                        `Version: ${info.versionName} (versionCode ${info.versionCode})`,
-                        `Build Mode: ${info.buildType}`,
-                        `AdMob App ID: ${info.adMobAppId}`,
-                        `Banner Ad Unit: ${info.bannerAdUnitId}`,
-                        `Interstitial Ad Unit: ${info.interstitialAdUnitId}`,
-                        'GitHub Actions Workflow: .github/workflows/android-release.yml'
-                    ].join('\n');
-                }
-
-                safeCopyText(summary, null);
-                if (typeof triggerHaptic === 'function') triggerHaptic('success');
-                if (typeof showGlobalToast === 'function') {
-                    showGlobalToast('Release & AdMob Configuration Copied');
-                }
-            } catch (e) {
-                console.warn('copyBuildReleaseSummary error:', e);
-            }
-        }
-        window.copyBuildReleaseSummary = copyBuildReleaseSummary;
 
         function setAppThemeExplicit(targetTheme) {
             applyTheme(targetTheme, true);

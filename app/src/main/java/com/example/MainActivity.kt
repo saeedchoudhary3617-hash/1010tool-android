@@ -591,12 +591,6 @@ class MainActivity : ComponentActivity() {
         }
 
         @JavascriptInterface
-        fun getBuildReleaseInfo(): String {
-            val buildMode = if (BuildConfig.DEBUG) "DEBUG (Preview Fallback Enabled)" else "RELEASE (Production AdMob Only)"
-            return """{"applicationId":"${BuildConfig.APPLICATION_ID}","versionName":"${BuildConfig.VERSION_NAME}","versionCode":${BuildConfig.VERSION_CODE},"buildType":"$buildMode","adMobAppId":"ca-app-pub-5272800200175412~8920229976","bannerAdUnitId":"ca-app-pub-5272800200175412/4688633088","interstitialAdUnitId":"ca-app-pub-5272800200175412/4141838179","adMobProductionReady":true}"""
-        }
-
-        @JavascriptInterface
         fun hapticFeedback(type: String) {
             activity.runOnUiThread {
                 try {
