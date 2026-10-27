@@ -1,0 +1,126 @@
+name: Build & Publish Android APK & AAB
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-android:
+    name: Compile Signed APK & Play Store AAB
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.11.1'
+
+      - name: Restore Debug Keystore
+        run: |
+          if [ -f "debug.keystore.base64" ] && [ ! -f "debug.keystore" ]; then
+            base64 -d debug.keystore.base64 > debug.keystore
+          elif [ ! -f "debug.keystore" ]; then
+            keytool -genkeypair -v \
+              -keystore debug.keystore \
+              -storepass android \
+              -alias androiddebugkey \
+              -keypass android \
+              -keyalg RSA \
+              -keysize 2048 \
+              -validity 10000 \
+              -dname "CN=Android Debug,O=Android,C=US"
+          fi
+
+      - name: Provision Release Signing Keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          SECRET_STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+          SECRET_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            echo "Using repository secret KEYSTORE_BASE64 for release signing..."
+            echo "$KEYSTORE_BASE64" | base64 -d > my-upload-key.jks
+            echo "STORE_PASSWORD=${SECRET_STORE_PASSWORD}" >> $GITHUB_ENV
+            echo "KEY_PASSWORD=${SECRET_KEY_PASSWORD}" >> $GITHUB_ENV
+          else
+            echo "No KEYSTORE_BASE64 secret found; generating automatic upload keystore so release APK/AAB builds out of the box..."
+            DEFAULT_PASS="1010tool_release_pass"
+            keytool -genkeypair -v \
+              -keystore my-upload-key.jks \
+              -storepass "$DEFAULT_PASS" \
+              -alias upload \
+              -keypass "$DEFAULT_PASS" \
+              -keyalg RSA \
+              -keysize 2048 \
+              -validity 10000 \
+              -dname "CN=1010Tool,OU=Mobile,O=1010Tool,L=City,ST=State,C=US"
+            echo "STORE_PASSWORD=${DEFAULT_PASS}" >> $GITHUB_ENV
+            echo "KEY_PASSWORD=${DEFAULT_PASS}" >> $GITHUB_ENV
+          fi
+          echo "KEYSTORE_PATH=${GITHUB_WORKSPACE}/my-upload-key.jks" >> $GITHUB_ENV
+
+      - name: Build Release APK, Debug APK, and Play Store AAB
+        run: |
+          gradle :app:assembleRelease :app:assembleDebug :app:bundleRelease --no-daemon
+
+      - name: Prepare Downloadable Package Files
+        run: |
+          mkdir -p dist-packages
+          REL_APK=$(find app/build/outputs/apk/release -name "*.apk" | head -n 1)
+          DBG_APK=$(find app/build/outputs/apk/debug -name "*.apk" | head -n 1)
+          REL_AAB=$(find app/build/outputs/bundle/release -name "*.aab" | head -n 1)
+
+          if [ -n "$REL_APK" ]; then
+            cp "$REL_APK" dist-packages/1010Tool-release-signed.apk
+          fi
+          if [ -n "$DBG_APK" ]; then
+            cp "$DBG_APK" dist-packages/1010Tool-debug.apk
+          fi
+          if [ -n "$REL_AAB" ]; then
+            cp "$REL_AAB" dist-packages/1010Tool-release.aab
+          fi
+          ls -lh dist-packages/
+
+      - name: Upload APK & AAB Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: 1010Tool-Android-Packages
+          path: dist-packages/*
+          if-no-files-found: error
+
+      - name: Publish Direct Download Links to GitHub Releases
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_type == 'tag' && github.ref_name || 'latest-apk' }}
+          name: "1010Tool Android APK & AAB (${{ github.ref_type == 'tag' && github.ref_name || 'Latest Build' }})"
+          body: |
+            ### Direct Download Links for 1010Tool (Production AdMob Enabled)
+            - **1010Tool-release-signed.apk**: Direct installable release APK with production AdMob IDs (`ca-app-pub-5272800200175412~8920229976`).
+            - **1010Tool-release.aab**: Signed Android App Bundle ready for Google Play Console upload.
+            - **1010Tool-debug.apk**: Debug build with preview test fallback.
+          files: |
+            dist-packages/1010Tool-release-signed.apk
+            dist-packages/1010Tool-debug.apk
+            dist-packages/1010Tool-release.aab
+          prerelease: false
+          make_latest: true

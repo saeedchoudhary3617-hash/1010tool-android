@@ -57,8 +57,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.lifecycleScope
+import android.view.Gravity
+import android.widget.FrameLayout
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.ui.unit.dp
 import com.example.ui.theme.MyApplicationTheme
 import com.google.android.gms.ads.AdError
+import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
@@ -77,13 +82,16 @@ import kotlinx.coroutines.withContext
 class MainActivity : ComponentActivity() {
 
     companion object {
-        private const val TEST_BANNER_AD_UNIT_ID = "ca-app-pub-3940256099942544/6300978111"
-        private const val TEST_INTERSTITIAL_AD_UNIT_ID = "ca-app-pub-3940256099942544/1033173712"
+        private const val BANNER_AD_UNIT_ID = "ca-app-pub-5272800200175412/4688633088"
+        private const val INTERSTITIAL_AD_UNIT_ID = "ca-app-pub-5272800200175412/4141838179"
+        private const val FALLBACK_TEST_BANNER_AD_UNIT_ID = "ca-app-pub-3940256099942544/6300978111"
+        private const val FALLBACK_TEST_INTERSTITIAL_AD_UNIT_ID = "ca-app-pub-3940256099942544/1033173712"
     }
 
     private var filePathCallback: ValueCallback<Array<Uri>>? = null
     private var activeWebView: WebView? = null
     private var bannerAdView: AdView? = null
+    private var bannerContainer: FrameLayout? = null
     private var interstitialAd: InterstitialAd? = null
     private var isInterstitialLoading: Boolean = false
     private var onCameraPermissionRequestAction: (() -> Unit)? = null
@@ -93,13 +101,14 @@ class MainActivity : ComponentActivity() {
         isDarkModeState.value = isDark
     }
 
-    fun loadInterstitialAd() {
+    fun loadInterstitialAd(useTestFallback: Boolean = false) {
         if (isInterstitialLoading || interstitialAd != null) return
         isInterstitialLoading = true
+        val unitId = if (useTestFallback) FALLBACK_TEST_INTERSTITIAL_AD_UNIT_ID else INTERSTITIAL_AD_UNIT_ID
         val adRequest = AdRequest.Builder().build()
         InterstitialAd.load(
             this,
-            TEST_INTERSTITIAL_AD_UNIT_ID,
+            unitId,
             adRequest,
             object : InterstitialAdLoadCallback() {
                 override fun onAdLoaded(ad: InterstitialAd) {
@@ -108,12 +117,12 @@ class MainActivity : ComponentActivity() {
                     ad.fullScreenContentCallback = object : FullScreenContentCallback() {
                         override fun onAdDismissedFullScreenContent() {
                             interstitialAd = null
-                            loadInterstitialAd()
+                            loadInterstitialAd(false)
                         }
 
                         override fun onAdFailedToShowFullScreenContent(adError: AdError) {
                             interstitialAd = null
-                            loadInterstitialAd()
+                            loadInterstitialAd(false)
                         }
                     }
                 }
@@ -121,10 +130,48 @@ class MainActivity : ComponentActivity() {
                 override fun onAdFailedToLoad(loadAdError: LoadAdError) {
                     isInterstitialLoading = false
                     interstitialAd = null
-                    Log.w("MainActivity", "Interstitial ad failed to load: ${loadAdError.message}")
+                    Log.w("MainActivity", "Interstitial ad ($unitId) failed to load: ${loadAdError.message}")
+                    if (!useTestFallback && BuildConfig.DEBUG) {
+                        loadInterstitialAd(true)
+                    }
                 }
             }
         )
+    }
+
+    private fun attachBannerAd(container: FrameLayout, useTestFallback: Boolean = false) {
+        try {
+            bannerAdView?.destroy()
+        } catch (_: Exception) {}
+        container.removeAllViews()
+
+        val unitId = if (useTestFallback) FALLBACK_TEST_BANNER_AD_UNIT_ID else BANNER_AD_UNIT_ID
+        val adView = AdView(container.context).apply {
+            setAdSize(AdSize.BANNER)
+            adUnitId = unitId
+            adListener = object : AdListener() {
+                override fun onAdFailedToLoad(loadAdError: LoadAdError) {
+                    Log.w("MainActivity", "Banner ad ($unitId) failed to load: ${loadAdError.message}")
+                    if (!useTestFallback && BuildConfig.DEBUG) {
+                        container.post {
+                            attachBannerAd(container, useTestFallback = true)
+                        }
+                    }
+                }
+            }
+        }
+        bannerAdView = adView
+        val lp = FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.WRAP_CONTENT,
+            FrameLayout.LayoutParams.WRAP_CONTENT,
+            Gravity.CENTER
+        )
+        container.addView(adView, lp)
+        try {
+            adView.loadAd(AdRequest.Builder().build())
+        } catch (e: Exception) {
+            Log.w("MainActivity", "Banner ad load error: ${e.message}")
+        }
     }
 
     fun showInterstitialOnUiThread() {
@@ -200,7 +247,16 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         try {
-            MobileAds.initialize(this) {}
+            MobileAds.initialize(this) {
+                runOnUiThread {
+                    loadInterstitialAd()
+                    bannerContainer?.let { container ->
+                        if (bannerAdView == null) {
+                            attachBannerAd(container, useTestFallback = false)
+                        }
+                    }
+                }
+            }
             loadInterstitialAd()
         } catch (e: Exception) {
             Log.w("MainActivity", "MobileAds initialization error: ${e.message}")
@@ -472,17 +528,12 @@ class MainActivity : ComponentActivity() {
             AndroidView(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .heightIn(min = 50.dp)
                     .wrapContentHeight(),
                 factory = { ctx ->
-                    AdView(ctx).apply {
-                        setAdSize(AdSize.BANNER)
-                        adUnitId = TEST_BANNER_AD_UNIT_ID
-                        bannerAdView = this
-                        try {
-                            loadAd(AdRequest.Builder().build())
-                        } catch (e: Exception) {
-                            Log.w("MainActivity", "Banner ad load error: ${e.message}")
-                        }
+                    FrameLayout(ctx).apply {
+                        bannerContainer = this
+                        attachBannerAd(this, useTestFallback = false)
                     }
                 }
             )
@@ -537,6 +588,12 @@ class MainActivity : ComponentActivity() {
             activity.runOnUiThread {
                 Toast.makeText(activity, message, Toast.LENGTH_SHORT).show()
             }
+        }
+
+        @JavascriptInterface
+        fun getBuildReleaseInfo(): String {
+            val buildMode = if (BuildConfig.DEBUG) "DEBUG (Preview Fallback Enabled)" else "RELEASE (Production AdMob Only)"
+            return """{"applicationId":"${BuildConfig.APPLICATION_ID}","versionName":"${BuildConfig.VERSION_NAME}","versionCode":${BuildConfig.VERSION_CODE},"buildType":"$buildMode","adMobAppId":"ca-app-pub-5272800200175412~8920229976","bannerAdUnitId":"ca-app-pub-5272800200175412/4688633088","interstitialAdUnitId":"ca-app-pub-5272800200175412/4141838179","adMobProductionReady":true}"""
         }
 
         @JavascriptInterface

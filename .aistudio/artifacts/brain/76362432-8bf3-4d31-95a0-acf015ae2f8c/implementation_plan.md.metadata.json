@@ -1,0 +1,6 @@
+{
+  "summary":  "Implementation plan for automating direct APK and AAB release downloads via GitHub Actions with production AdMob IDs and an in-app Build & Release status panel.",
+  "updatedAt":  "2026-10-27T13:58:58.390193285Z",
+  "requestFeedback":  true,
+  "userFacing":  true
+}
