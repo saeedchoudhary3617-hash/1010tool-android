@@ -1,0 +1,6 @@
+{
+  "name": "1010Tool",
+  "description": "Professional, fast, private PDF suite, image editor, calculators & developer utilities.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

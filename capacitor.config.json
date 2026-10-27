@@ -1,0 +1,9 @@
+{
+  "appId": "com.aistudio.tententool.utility",
+  "appName": "1010Tool",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  }
+}
