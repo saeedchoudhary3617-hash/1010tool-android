@@ -1,59 +1,62 @@
-# Fix GitHub Actions SDK Manager (`package 'tools'` Error) & Release Pipeline
+# Enforce 100% Production AdMob Ads (Remove Test Ad Fallbacks)
 
-This plan resolves the `Failed to find package 'tools' in sdkmanager` failure in GitHub Actions by removing the broken third-party `setup-android` action (which attempts to install the deprecated `tools` SDK package removed by Google) and using the pre-installed Android SDK and modern `cmdline-tools` bundled on GitHub's `ubuntu-latest` runners.
+This plan removes all Google test ad unit IDs and fallback mechanisms from the codebase, ensuring that both debug and release APK builds exclusively request and display your genuine production AdMob ads.
 
 ### User Review & Critical Decisions
 
 > [!IMPORTANT]
-> Review the workflow fix below and click **Proceed** to apply the updated GitHub Actions configuration.
+> Review the confirmed choices below and click **Proceed** to apply the changes.
 
-- **Root Cause**: `android-actions/setup-android` internally invokes `sdkmanager "tools"`, which Google recently removed from the Android SDK repository in favor of `cmdline-tools;latest`.
-- **Chosen Fix**: Remove `android-actions/setup-android` entirely and configure `ANDROID_HOME` / `ANDROID_SDK_ROOT` directly against the pre-installed `/usr/local/lib/android/sdk` on `ubuntu-latest`, using `$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses` to accept SDK licenses cleanly.
+- **Confirmed Decision 1**: Completely remove Google test ad unit IDs (`ca-app-pub-3940256099942544/...`) from `MainActivity.kt`.
+- **Confirmed Decision 2**: Ensure that both Banner and Interstitial ads strictly and exclusively use your real AdMob IDs:
+  - **AdMob App ID**: `ca-app-pub-5272800200175412~8920229976`
+  - **Banner Ad Unit**: `ca-app-pub-5272800200175412/4688633088`
+  - **Interstitial Ad Unit**: `ca-app-pub-5272800200175412/4141838179`
+- **Behavior on No Fill**: If AdMob has not yet filled inventory or is reviewing the account, the app will log the event and retry when appropriate, but will never fall back to Google sample/test ads.
 
 ### 1. Overview & Core Concept
 
 - **What It Does**:
-  1. Eliminates the `setup-android` action that triggers `Failed to find package 'tools' in sdkmanager`.
-  2. Uses the native Android SDK and `cmdline-tools` already pre-installed on GitHub-hosted Ubuntu runners, ensuring fast and reliable license acceptance without downloading legacy SDK packages.
-  3. Retains automatic keystore generation, Gradle 9.3.1 + JDK 21 compilation, workflow artifact upload, and automatic GitHub Release publishing (`v1.0.<run_number>`) with your production AdMob IDs.
-- **Target Audience / Persona**: App owners pushing from AI Studio to GitHub who want a zero-error CI build that outputs direct-download `.apk` and `.aab` links.
-- **Key Value**: Removes the broken legacy `sdkmanager tools` call so the workflow proceeds directly to compiling and publishing your APK.
+  1. Strips out `FALLBACK_TEST_BANNER_AD_UNIT_ID` and `FALLBACK_TEST_INTERSTITIAL_AD_UNIT_ID` from `MainActivity.kt`.
+  2. Simplifies `attachBannerAd()` and `loadInterstitialAd()` so they never substitute test ad units under any condition.
+  3. Guarantees that any APK built (both locally and via GitHub Actions) only ever contacts your production AdMob unit endpoints.
+- **Target Audience / Persona**: App publisher distributing the signed release APK to users or preparing for Google Play Store launch.
+- **Key Value**: Guarantees genuine ad impressions and prevents confusing "Test Ad" badges from appearing on real devices.
 
 ### 2. User Experience & Visual Design
 
-- **Key User Flows**:
-  1. Push the updated workflow to GitHub using AI Studio's **Push to GitHub** button.
-  2. GitHub Actions skips legacy `tools` installation, accepts SDK licenses via `cmdline-tools`, builds `1010Tool-release-signed.apk`, `1010Tool-debug.apk`, and `1010Tool-release.aab`, and publishes them to the repository's **Releases** page.
-- **Visual Identity & Theme**:
-  - Preserves the existing **Minimal Vintage** theme (`#F4F1EA` light / `#141413` dark, `1px solid` ink borders, `Instrument Serif` + `JetBrains Mono`) and the **Release & APK Package** status card inside the app's **Settings** tab.
-- **Interactive Feedback & Motion**: Unchanged tactile press states, haptic feedback, and clipboard copy toast in the Settings view.
+- **Ad Presentation**:
+  - The Banner Ad container remains at the bottom of the screen (`Modifier.heightIn(min = 50.dp)`), above navigation safe insets, centered in its container.
+  - Interstitial ads continue to trigger smoothly on successful tool operations without blocking JavaScript UI animations (via Async Yielding).
+  - Only real AdMob advertisements will be shown.
 
 ### 3. Key Product Decisions & Trade-Offs
 
-- **Decision 1: Use Pre-Installed Runner Android SDK Instead of `android-actions/setup-android`**
-  - *Chosen Approach*: Point `ANDROID_HOME` and `ANDROID_SDK_ROOT` to `/usr/local/lib/android/sdk` (standard on `ubuntu-latest`) and invoke `$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses` directly.
-  - *Why*: Avoids third-party action breakage caused by Google removing the obsolete `tools` package from the SDK repository, and shaves ~30 seconds off every CI run.
-  - *Alternatives Considered*: Pinning an older version of `setup-android`, which still fails because the upstream Google SDK repository itself removed the `tools` package.
+- **Decision 1: Complete Removal of Fallback Units**
+  - *Chosen Approach*: Remove test fallback constants and conditional checks entirely rather than toggling via build flags.
+  - *Why*: Eliminates any risk of test ads leaking into signed release APKs or debug APKs tested on physical devices.
+  - *Note on AdMob Serving*: Note that brand-new ad units or unlinked apps may take some time for AdMob to serve 100% live inventory (AdMob often responds with `ERROR_CODE_NO_FILL` until account and app verification complete in the AdMob console).
 
 ### 4. Technical Architecture & Data Strategy *(Technical Reference)*
 
-- **Architecture & Component Diagram**:
+- **Ad Flow Diagram**:
 ```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                    GitHub Actions (ubuntu-latest)                       │
-│  ┌─────────────────────┐  ┌──────────────────────┐  ┌────────────────┐  │
-│  │ JDK 21 + Pre-built  │─▶│ cmdline-tools/latest │─▶│ Gradle 9.3.1   │  │
-│  │ $ANDROID_HOME SDK   │  │ sdkmanager --licenses│  │ APK/AAB Build  │  │
-│  └─────────────────────┘  └──────────────────────┘  └───────┬────────┘  │
-└─────────────────────────────────────────────────────────────┼───────────┘
-                                                              │
-                                                              ▼
-                                          ┌───────────────────────────────────┐
-                                          │ GitHub Releases + Actions Artifact│
-                                          │ • 1010Tool-release-signed.apk     │
-                                          │ • 1010Tool-debug.apk              │
-                                          │ • 1010Tool-release.aab            │
-                                          └───────────────────────────────────┘
+┌────────────────────────────────────────────────────────┐
+│                   MainActivity                         │
+│  ┌───────────────────────┐  ┌───────────────────────┐  │
+│  │  BANNER_AD_UNIT_ID    │  │INTERSTITIAL_AD_UNIT_ID│  │
+│  │  .../4688633088       │  │  .../4141838179       │  │
+│  └───────────┬───────────┘  └───────────┬───────────┘  │
+│              │                          │              │
+│              ▼                          ▼              │
+│      AdRequest.Builder          AdRequest.Builder      │
+│              │                          │              │
+│              ▼                          ▼              │
+│   Google AdMob Production    Google AdMob Production   │
+│       Ad Server                  Ad Server             │
+└────────────────────────────────────────────────────────┘
 ```
-- **Data Model & State**: No changes required to the Android application data layer; only the CI/CD pipeline SDK setup step is updated.
-- **Interactive Component & State Mapping**: The **Settings → Release & APK Package** card continues to display live package metadata and copy release details.
+- **Changes in `MainActivity.kt`**:
+  - Delete `FALLBACK_TEST_BANNER_AD_UNIT_ID` and `FALLBACK_TEST_INTERSTITIAL_AD_UNIT_ID`.
+  - In `loadInterstitialAd()`: Remove `useTestFallback` parameter and the `if (BuildConfig.DEBUG) loadInterstitialAd(true)` fallback call in `onAdFailedToLoad`.
+  - In `attachBannerAd()`: Remove `useTestFallback` parameter and the `container.post { attachBannerAd(container, useTestFallback = true) }` fallback call in `onAdFailedToLoad`.

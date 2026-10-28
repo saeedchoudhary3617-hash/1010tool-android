@@ -84,8 +84,6 @@ class MainActivity : ComponentActivity() {
     companion object {
         private const val BANNER_AD_UNIT_ID = "ca-app-pub-5272800200175412/4688633088"
         private const val INTERSTITIAL_AD_UNIT_ID = "ca-app-pub-5272800200175412/4141838179"
-        private const val FALLBACK_TEST_BANNER_AD_UNIT_ID = "ca-app-pub-3940256099942544/6300978111"
-        private const val FALLBACK_TEST_INTERSTITIAL_AD_UNIT_ID = "ca-app-pub-3940256099942544/1033173712"
     }
 
     private var filePathCallback: ValueCallback<Array<Uri>>? = null
@@ -101,14 +99,13 @@ class MainActivity : ComponentActivity() {
         isDarkModeState.value = isDark
     }
 
-    fun loadInterstitialAd(useTestFallback: Boolean = false) {
+    fun loadInterstitialAd() {
         if (isInterstitialLoading || interstitialAd != null) return
         isInterstitialLoading = true
-        val unitId = if (useTestFallback) FALLBACK_TEST_INTERSTITIAL_AD_UNIT_ID else INTERSTITIAL_AD_UNIT_ID
         val adRequest = AdRequest.Builder().build()
         InterstitialAd.load(
             this,
-            unitId,
+            INTERSTITIAL_AD_UNIT_ID,
             adRequest,
             object : InterstitialAdLoadCallback() {
                 override fun onAdLoaded(ad: InterstitialAd) {
@@ -117,12 +114,12 @@ class MainActivity : ComponentActivity() {
                     ad.fullScreenContentCallback = object : FullScreenContentCallback() {
                         override fun onAdDismissedFullScreenContent() {
                             interstitialAd = null
-                            loadInterstitialAd(false)
+                            loadInterstitialAd()
                         }
 
                         override fun onAdFailedToShowFullScreenContent(adError: AdError) {
                             interstitialAd = null
-                            loadInterstitialAd(false)
+                            loadInterstitialAd()
                         }
                     }
                 }
@@ -130,33 +127,24 @@ class MainActivity : ComponentActivity() {
                 override fun onAdFailedToLoad(loadAdError: LoadAdError) {
                     isInterstitialLoading = false
                     interstitialAd = null
-                    Log.w("MainActivity", "Interstitial ad ($unitId) failed to load: ${loadAdError.message}")
-                    if (!useTestFallback && BuildConfig.DEBUG) {
-                        loadInterstitialAd(true)
-                    }
+                    Log.w("MainActivity", "Interstitial ad failed to load: ${loadAdError.message}")
                 }
             }
         )
     }
 
-    private fun attachBannerAd(container: FrameLayout, useTestFallback: Boolean = false) {
+    private fun attachBannerAd(container: FrameLayout) {
         try {
             bannerAdView?.destroy()
         } catch (_: Exception) {}
         container.removeAllViews()
 
-        val unitId = if (useTestFallback) FALLBACK_TEST_BANNER_AD_UNIT_ID else BANNER_AD_UNIT_ID
         val adView = AdView(container.context).apply {
             setAdSize(AdSize.BANNER)
-            adUnitId = unitId
+            adUnitId = BANNER_AD_UNIT_ID
             adListener = object : AdListener() {
                 override fun onAdFailedToLoad(loadAdError: LoadAdError) {
-                    Log.w("MainActivity", "Banner ad ($unitId) failed to load: ${loadAdError.message}")
-                    if (!useTestFallback && BuildConfig.DEBUG) {
-                        container.post {
-                            attachBannerAd(container, useTestFallback = true)
-                        }
-                    }
+                    Log.w("MainActivity", "Banner ad failed to load: ${loadAdError.message}")
                 }
             }
         }
@@ -252,7 +240,7 @@ class MainActivity : ComponentActivity() {
                     loadInterstitialAd()
                     bannerContainer?.let { container ->
                         if (bannerAdView == null) {
-                            attachBannerAd(container, useTestFallback = false)
+                            attachBannerAd(container)
                         }
                     }
                 }
@@ -533,7 +521,7 @@ class MainActivity : ComponentActivity() {
                 factory = { ctx ->
                     FrameLayout(ctx).apply {
                         bannerContainer = this
-                        attachBannerAd(this, useTestFallback = false)
+                        attachBannerAd(this)
                     }
                 }
             )
