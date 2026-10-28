@@ -10,7 +10,7 @@
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://1010tool.com/" />
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='14' fill='%23C84B31' stroke='%231C1917' stroke-width='4'/><text y='.74em' font-size='54' x='16' fill='%23FAF8F5' font-family='Georgia, serif' font-weight='bold'>10</text></svg>" />
+    <link rel="icon" type="image/png" href="images/app_logo.png" />
     <meta name="theme-color" id="metaThemeColor" content="#F4F1EA" />
     <!-- Immediate Early Theme Restoration & WebView Canvas Stability Guard -->
     <script>
@@ -192,20 +192,17 @@
         .brand-logo-icon {
             width: 42px;
             height: 42px;
-            border-radius: 6px;
-            background: var(--surface);
-            color: var(--accent);
+            border-radius: 8px;
+            background: transparent;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            border: 1px solid var(--text);
-            box-shadow: 2px 2px 0px var(--text);
+            overflow: hidden;
         }
         body.dark .brand-logo-icon {
-            background: var(--surface);
-            border-color: var(--border);
-            box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.5);
+            background: transparent;
+            box-shadow: none;
         }
         .brand-meta {
             display: flex;
@@ -2854,11 +2851,7 @@
             <div class="header-top-row">
                 <div class="brand-group">
                     <div class="brand-logo-icon" aria-hidden="true">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
-                            <polyline points="14 2 14 8 20 8"/>
-                            <path d="m9 15 2 2 4-4"/>
-                        </svg>
+                        <img src="images/app_logo.png" alt="1010 Tool Logo" style="width: 100%; height: 100%; object-fit: contain; display: block;" />
                     </div>
                     <div class="brand-meta">
                         <h1 class="brand-name">1010 <span class="brand-name-suffix">Tools</span></h1>

@@ -28,6 +28,11 @@ app.use(express.static(wwwPath));
 // API Routes
 app.use('/api', apiRoutes);
 
+// AdMob app-ads.txt Verification
+app.get('/app-ads.txt', (req, res) => {
+  res.type('text/plain').send('google.com, pub-5272800200175412, DIRECT, f08c47fec0942fa0\n');
+});
+
 // Fallback for SPA/PWA routing
 app.get('*', (req, res) => {
   res.sendFile(path.join(wwwPath, 'index.html'));
