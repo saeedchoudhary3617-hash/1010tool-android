@@ -279,9 +279,11 @@
             color: var(--accent);
             box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.5);
         }
-        .theme-toggle-btn:hover {
-            border-color: var(--accent);
-            color: var(--accent);
+        @media (hover: hover) {
+            .theme-toggle-btn:hover {
+                border-color: var(--accent);
+                color: var(--accent);
+            }
         }
         .theme-toggle-btn:active {
             transform: translate(2px, 2px);
@@ -405,10 +407,12 @@
             box-shadow: var(--shadow-sm);
             letter-spacing: -0.01em;
         }
-        .category-pill:hover {
-            color: var(--text);
-            border-color: var(--text);
-            background: var(--surface-hover);
+        @media (hover: hover) {
+            .category-pill:hover {
+                color: var(--text);
+                border-color: var(--text);
+                background: var(--surface-hover);
+            }
         }
         /* Inked stamp / inverted index card active state */
         .category-pill.active,
@@ -496,13 +500,19 @@
             width: 100%;
         }
 
-        .tool-card:hover,
         .tool-card:focus-visible,
-        .home-tool-card:hover,
         .home-tool-card:focus-visible {
             background: rgba(185,79,55,.07);
             border-color: var(--accent);
             outline: none;
+        }
+        @media (hover: hover) {
+            .tool-card:hover,
+            .home-tool-card:hover {
+                background: rgba(185,79,55,.07);
+                border-color: var(--accent);
+                outline: none;
+            }
         }
 
         .tool-icon {
@@ -576,8 +586,10 @@
             box-shadow: var(--shadow-sm);
             transition: border-color 0.15s ease;
         }
-        .home-feature-item:hover {
-            border-color: var(--text);
+        @media (hover: hover) {
+            .home-feature-item:hover {
+                border-color: var(--text);
+            }
         }
         .home-feature-item .feat-icon {
             font-size: 1.4rem;
@@ -638,10 +650,12 @@
             border-color: var(--border);
             color: var(--text);
         }
-        .btn-back-home:hover {
-            background: var(--text);
-            color: var(--bg);
-            border-color: var(--text);
+        @media (hover: hover) {
+            .btn-back-home:hover {
+                background: var(--text);
+                color: var(--bg);
+                border-color: var(--text);
+            }
         }
         .tool-nav-title-group {
             display: flex;
@@ -695,9 +709,11 @@
             cursor: pointer;
             transition: all 0.15s ease;
         }
-        .btn-nav-search:hover {
-            border-color: var(--accent);
-            color: var(--accent);
+        @media (hover: hover) {
+            .btn-nav-search:hover {
+                border-color: var(--accent);
+                color: var(--accent);
+            }
         }
 
         /* PINNED SECTION ON QUICK LAUNCH */
@@ -712,20 +728,24 @@
             box-shadow: 2px 2px 0px rgba(200, 75, 49, 0.18);
             font-weight: 600;
         }
-        .quick-chip.quick-chip-pinned:hover {
-            border-color: var(--text);
-            background: var(--text);
-            color: var(--bg);
+        @media (hover: hover) {
+            .quick-chip.quick-chip-pinned:hover {
+                border-color: var(--text);
+                background: var(--text);
+                color: var(--bg);
+            }
         }
         body.dark .quick-chip.quick-chip-pinned {
             background: var(--surface);
             border-color: var(--accent);
             color: var(--text);
         }
-        body.dark .quick-chip.quick-chip-pinned:hover {
-            background: var(--text);
-            border-color: var(--text);
-            color: var(--bg);
+        @media (hover: hover) {
+            body.dark .quick-chip.quick-chip-pinned:hover {
+                background: var(--text);
+                border-color: var(--text);
+                color: var(--bg);
+            }
         }
         .chip-pin-indicator {
             font-size: 0.82rem;
@@ -765,17 +785,21 @@
             transition: all 0.15s ease;
             flex-shrink: 0;
         }
-        .chip-unpin-btn:hover {
-            background: var(--error);
-            color: #FAF8F5;
+        @media (hover: hover) {
+            .chip-unpin-btn:hover {
+                background: var(--error);
+                color: #FAF8F5;
+            }
         }
         body.dark .chip-unpin-btn {
             background: rgba(255, 255, 255, 0.12);
             color: var(--text-light);
         }
-        body.dark .chip-unpin-btn:hover {
-            background: var(--error);
-            color: #FAF8F5;
+        @media (hover: hover) {
+            body.dark .chip-unpin-btn:hover {
+                background: var(--error);
+                color: #FAF8F5;
+            }
         }
 
         /* Star Button on All Cards */
@@ -795,9 +819,11 @@
             flex-shrink: 0;
             margin-left: 2px;
         }
-        .btn-fav-star:hover {
-            color: var(--accent);
-            transform: scale(1.12);
+        @media (hover: hover) {
+            .btn-fav-star:hover {
+                color: var(--accent);
+                transform: scale(1.12);
+            }
         }
         .btn-fav-star.active {
             color: var(--accent) !important;
@@ -908,10 +934,12 @@
             line-height: 1;
             transition: all 0.15s ease;
         }
-        .bottom-search-inner .home-search-clear-btn:hover {
-            background: var(--text);
-            color: var(--bg);
-            border-color: var(--text);
+        @media (hover: hover) {
+            .bottom-search-inner .home-search-clear-btn:hover {
+                background: var(--text);
+                color: var(--bg);
+                border-color: var(--text);
+            }
         }
 
         /* FLOATING SEARCH RESULTS DROPDOWN FOR TOP HOME SEARCH BAR */
@@ -963,8 +991,10 @@
             border-radius: 4px;
             transition: background 0.15s ease;
         }
-        .btn-show-all-results-action:hover {
-            background: var(--accent-light);
+        @media (hover: hover) {
+            .btn-show-all-results-action:hover {
+                background: var(--accent-light);
+            }
         }
         .search-results-list {
             max-height: 230px;
@@ -1001,8 +1031,10 @@
             box-shadow: 2px 2px 0px #1C1917;
             font-family: var(--font-mono);
         }
-        .btn-show-all-results:hover {
-            background: var(--accent-hover);
+        @media (hover: hover) {
+            .btn-show-all-results:hover {
+                background: var(--accent-hover);
+            }
         }
         .btn-show-all-results:active {
             transform: translate(2px, 2px);
@@ -1033,8 +1065,13 @@
         body.dark .search-result-item {
             color: var(--text);
         }
-        .search-result-item:hover, .search-result-item:active {
+        .search-result-item:active {
             background: var(--surface-hover);
+        }
+        @media (hover: hover) {
+            .search-result-item:hover {
+                background: var(--surface-hover);
+            }
         }
         .search-result-category {
             font-family: var(--font-mono);
@@ -1102,11 +1139,13 @@
             -webkit-tap-highlight-color: transparent;
             letter-spacing: -0.01em;
         }
-        .quick-chip:hover {
-            border-color: var(--text);
-            color: var(--bg);
-            background: var(--text);
-            box-shadow: 2px 2px 0px var(--accent);
+        @media (hover: hover) {
+            .quick-chip:hover {
+                border-color: var(--text);
+                color: var(--bg);
+                background: var(--text);
+                box-shadow: 2px 2px 0px var(--accent);
+            }
         }
         .quick-chip:active {
             transform: translate(2px, 2px);
@@ -1118,11 +1157,13 @@
             color: var(--text);
             box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.4);
         }
-        body.dark .quick-chip:hover {
-            background: var(--text);
-            border-color: var(--text);
-            color: var(--bg);
-            box-shadow: 2px 2px 0px var(--accent);
+        @media (hover: hover) {
+            body.dark .quick-chip:hover {
+                background: var(--text);
+                border-color: var(--text);
+                color: var(--bg);
+                box-shadow: 2px 2px 0px var(--accent);
+            }
         }
         .chip-icon {
             font-size: 0.92rem;
@@ -1192,9 +1233,11 @@
             display: inline-flex;
             align-items: center;
         }
-        .nav-btn:hover {
-            border-color: var(--text);
-            color: var(--accent);
+        @media (hover: hover) {
+            .nav-btn:hover {
+                border-color: var(--text);
+                color: var(--accent);
+            }
         }
         .nav-btn.active {
             background: var(--text);
@@ -1244,9 +1287,11 @@
             margin-bottom: 14px;
             position: relative;
         }
-        .upload-box:hover {
-            border-color: var(--accent);
-            background: var(--surface-hover);
+        @media (hover: hover) {
+            .upload-box:hover {
+                border-color: var(--accent);
+                background: var(--surface-hover);
+            }
         }
         .upload-box input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
         .upload-hint { font-family: var(--font-mono); color: var(--text-light); font-size: 0.74rem; margin-top: 6px; letter-spacing: -0.01em; }
@@ -1279,16 +1324,20 @@
             transition: transform 0.15s ease, border-color 0.15s ease;
             user-select: none;
         }
-        .file-thumb-container:hover {
-            transform: scale(1.04);
-            border-color: var(--accent);
+        @media (hover: hover) {
+            .file-thumb-container:hover {
+                transform: scale(1.04);
+                border-color: var(--accent);
+            }
         }
         body.dark .file-thumb-container, html.dark .file-thumb-container {
             background: var(--surface-hover);
             border-color: var(--border);
         }
-        body.dark .file-thumb-container:hover, html.dark .file-thumb-container:hover {
-            border-color: var(--accent);
+        @media (hover: hover) {
+            body.dark .file-thumb-container:hover, html.dark .file-thumb-container:hover {
+                border-color: var(--accent);
+            }
         }
         .file-thumb-img {
             width: 100%;
@@ -1450,8 +1499,10 @@
             color: var(--text-light); font-size: 1.1rem; line-height: 1;
             border-radius: 4px; touch-action: none; flex-shrink: 0;
         }
-        .file-drag-handle:hover {
-            color: var(--accent); background: var(--surface-hover);
+        @media (hover: hover) {
+            .file-drag-handle:hover {
+                color: var(--accent); background: var(--surface-hover);
+            }
         }
         .file-drag-handle:active { cursor: grabbing; }
         .file-item-order-badge {
@@ -1470,8 +1521,10 @@
             line-height: 1; display: inline-flex; align-items: center; justify-content: center;
         }
         body.dark .file-move-btn { background: var(--surface-hover); }
-        .file-move-btn:hover:not(:disabled) {
-            background: var(--accent); color: #FAF8F5; border-color: var(--accent);
+        @media (hover: hover) {
+            .file-move-btn:hover:not(:disabled) {
+                background: var(--accent); color: #FAF8F5; border-color: var(--accent);
+            }
         }
         .file-move-btn:disabled {
             opacity: 0.25; cursor: not-allowed; pointer-events: none;
@@ -1481,7 +1534,9 @@
             cursor: pointer; font-size: 1rem; padding: 2px 6px; border-radius: 4px;
             transition: all 0.15s ease; display: inline-flex; align-items: center; justify-content: center;
         }
-        .file-remove-btn:hover { background: rgba(185, 28, 28, 0.12); }
+        @media (hover: hover) {
+            .file-remove-btn:hover { background: rgba(185, 28, 28, 0.12); }
+        }
 
         /* INPUTS, SELECTS & MECHANICAL SLIDERS */
         .options { margin: 10px 0; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
@@ -1534,9 +1589,11 @@
             background: var(--surface);
             border-color: #8C8479;
         }
-        body.dark .upload-box:hover, html.dark .upload-box:hover {
-            background: var(--surface-hover);
-            border-color: var(--accent);
+        @media (hover: hover) {
+            body.dark .upload-box:hover, html.dark .upload-box:hover {
+                background: var(--surface-hover);
+                border-color: var(--accent);
+            }
         }
         #pcard-1, #pcard-2, #pcard-3, #pcard-4 {
             background: var(--surface) !important;
@@ -1614,8 +1671,10 @@
             cursor: pointer;
             transition: transform 0.1s ease, background-color 0.15s ease;
         }
-        input[type="range"]::-webkit-slider-thumb:hover {
-            background: var(--accent-hover);
+        @media (hover: hover) {
+            input[type="range"]::-webkit-slider-thumb:hover {
+                background: var(--accent-hover);
+            }
         }
         input[type="range"]::-webkit-slider-thumb:active {
             transform: translate(1px, 1px);
@@ -1651,7 +1710,9 @@
             box-shadow: 2px 2px 0px #1C1917;
             letter-spacing: 0.01em;
         }
-        .btn:hover { background: var(--accent-hover); }
+        @media (hover: hover) {
+            .btn:hover { background: var(--accent-hover); }
+        }
         .btn:active {
             transform: translate(2px, 2px);
             box-shadow: none;
@@ -1923,10 +1984,12 @@
             user-select: none;
             outline: none;
         }
-        .thumbnail-item:hover {
-            transform: translate(-1px, -1px);
-            box-shadow: var(--shadow-md);
-            border-color: var(--text);
+        @media (hover: hover) {
+            .thumbnail-item:hover {
+                transform: translate(-1px, -1px);
+                box-shadow: var(--shadow-md);
+                border-color: var(--text);
+            }
         }
         .thumbnail-item:focus-visible {
             outline: 2px solid var(--accent);
@@ -1936,9 +1999,11 @@
             background: var(--surface);
             box-shadow: var(--shadow-sm);
         }
-        .dark .thumbnail-item:hover {
-            border-color: var(--accent);
-            box-shadow: var(--shadow-md);
+        @media (hover: hover) {
+            .dark .thumbnail-item:hover {
+                border-color: var(--accent);
+                box-shadow: var(--shadow-md);
+            }
         }
         .thumbnail-item img { width: 100%; height: auto; display: block; border-radius: 4px; }
         .thumbnail-item .page-num {
@@ -1986,10 +2051,12 @@
             white-space: nowrap;
             box-shadow: var(--shadow-sm);
         }
-        .btn-subtle:hover {
-            background: var(--text);
-            color: var(--bg);
-            border-color: var(--text);
+        @media (hover: hover) {
+            .btn-subtle:hover {
+                background: var(--text);
+                color: var(--bg);
+                border-color: var(--text);
+            }
         }
         .btn-subtle:active {
             transform: translate(1px, 1px);
@@ -2000,10 +2067,12 @@
             border-color: var(--border);
             color: var(--text);
         }
-        .dark .btn-subtle:hover {
-            background: var(--accent);
-            color: #FAF8F5;
-            border-color: var(--accent);
+        @media (hover: hover) {
+            .dark .btn-subtle:hover {
+                background: var(--accent);
+                color: #FAF8F5;
+                border-color: var(--accent);
+            }
         }
 
         /* QR SCANNER STYLES */
@@ -2187,7 +2256,9 @@
             font-size: 0.8rem; transition: background 0.15s ease;
         }
         .dark .qr-history-item { background: var(--bg); }
-        .qr-history-item:hover { background: var(--surface-hover); border-color: var(--text); }
+        @media (hover: hover) {
+            .qr-history-item:hover { background: var(--surface-hover); border-color: var(--text); }
+        }
 
         /* PDF COMPRESSOR STYLES */
         .compress-preset-grid {
@@ -2211,10 +2282,12 @@
             background: var(--bg);
             border-color: var(--border);
         }
-        .compress-preset-card:hover {
-            transform: translate(-1px, -1px);
-            border-color: var(--text);
-            box-shadow: var(--shadow-md);
+        @media (hover: hover) {
+            .compress-preset-card:hover {
+                transform: translate(-1px, -1px);
+                border-color: var(--text);
+                box-shadow: var(--shadow-md);
+            }
         }
         .compress-preset-card.active,
         .dark .compress-preset-card.active {
@@ -2328,8 +2401,10 @@
             box-shadow: 2px 2px 0px #000000;
             transition: transform 0.08s ease, box-shadow 0.08s ease;
         }
-        .smart-drop-btn:hover {
-            background: var(--accent-hover);
+        @media (hover: hover) {
+            .smart-drop-btn:hover {
+                background: var(--accent-hover);
+            }
         }
         .smart-drop-btn:active {
             transform: translate(2px, 2px);
@@ -2431,10 +2506,12 @@
             color: var(--surface);
         }
         /* Hover and tap effects */
-        .bottom-nav-item:hover:not(.active) {
-            background: var(--surface-hover);
-            border-color: var(--border);
-            color: var(--text);
+        @media (hover: hover) {
+            .bottom-nav-item:hover:not(.active) {
+                background: var(--surface-hover);
+                border-color: var(--border);
+                color: var(--text);
+            }
         }
         .bottom-nav-item:active {
             transform: translate(1px, 1px);
@@ -2497,8 +2574,10 @@
         .settings-row:first-of-type {
             border-top: 1px solid var(--border);
         }
-        .settings-row:hover {
-            background: var(--surface-hover);
+        @media (hover: hover) {
+            .settings-row:hover {
+                background: var(--surface-hover);
+            }
         }
         .settings-info {
             flex: 1;
@@ -2627,10 +2706,12 @@
             box-shadow: var(--shadow-sm);
             transition: all 0.12s ease;
         }
-        .settings-btn-action:hover {
-            border-color: var(--text);
-            background: var(--text);
-            color: var(--bg);
+        @media (hover: hover) {
+            .settings-btn-action:hover {
+                border-color: var(--text);
+                background: var(--text);
+                color: var(--bg);
+            }
         }
         .settings-btn-action:active {
             transform: translate(1px, 1px);
@@ -2640,10 +2721,12 @@
             color: var(--error);
             border-color: rgba(185, 28, 28, 0.35);
         }
-        .settings-btn-action.btn-danger:hover {
-            border-color: var(--error);
-            background: var(--error);
-            color: #FAF8F5;
+        @media (hover: hover) {
+            .settings-btn-action.btn-danger:hover {
+                border-color: var(--error);
+                background: var(--error);
+                color: #FAF8F5;
+            }
         }
 
         /* ==========================================================================
@@ -2715,11 +2798,17 @@
             box-shadow: 1px 1px 0px #1C1917;
             transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
         }
-        .result-preview-close-btn:hover,
         .result-preview-close-btn:focus-visible {
             border-color: var(--accent);
             color: var(--accent);
             outline: none;
+        }
+        @media (hover: hover) {
+            .result-preview-close-btn:hover {
+                border-color: var(--accent);
+                color: var(--accent);
+                outline: none;
+            }
         }
         .result-preview-close-btn:active {
             transform: translate(1px, 1px);
@@ -2831,10 +2920,15 @@
             box-shadow: 2px 2px 0px #1C1917;
             transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.1s ease;
         }
-        .result-preview-download-btn:hover,
         .result-preview-download-btn:focus-visible {
             background: var(--accent-hover, #9E3F29);
             outline: none;
+        }
+        @media (hover: hover) {
+            .result-preview-download-btn:hover {
+                background: var(--accent-hover, #9E3F29);
+                outline: none;
+            }
         }
         .result-preview-download-btn:active {
             transform: translate(2px, 2px);
@@ -2948,6 +3042,78 @@
             html.theme-transitioning *::after {
                 transition-duration: 0.01ms !important;
             }
+        }
+
+        /* ===== Touch and text fixes ===== */
+        html { -webkit-tap-highlight-color: transparent; }
+        .btn, .btn-subtle, .quick-chip, .category-pill, .nav-btn, .theme-toggle-btn,
+        .tool-card, .home-tool-card, .thumbnail-item, .smart-drop-btn, .btn-fav-star,
+        .bottom-nav-item, .btn-back-home, .btn-tool-favorite, .settings-btn-action {
+          touch-action: manipulation;
+        }
+
+        /* 1) Do not move elements under the finger on touch devices */
+        @media (pointer: coarse) {
+          .btn:active, .btn-subtle:active, .quick-chip:active, .category-pill:active,
+          .nav-btn:active, .theme-toggle-btn:active, .tool-card:active, .home-tool-card:active,
+          .thumbnail-item:active, .smart-drop-btn:active, .bottom-nav-item:active,
+          .settings-btn-action:active, .btn-show-all-results:active,
+          .result-preview-close-btn:active, .result-preview-download-btn:active {
+            transform: none !important;
+            box-shadow: none !important;
+            opacity: 0.85;
+          }
+        }
+
+        /* 3) Text must wrap, not get cut off */
+        .tool-card, .tool-card *,
+        .home-tool-card, .home-tool-card * { min-width: 0; }
+        .tool-card .card-title, .tool-card .tool-name, .tool-card h3,
+        .home-tool-card .card-title, .home-tool-card .tool-name, .home-tool-card h3 {
+          overflow-wrap: anywhere; hyphens: auto; line-height: 1.15;
+        }
+        @media (max-width: 480px) {
+          .tool-card .card-title, .tool-card .tool-name, .tool-card h3,
+          .home-tool-card .card-title, .home-tool-card .tool-name, .home-tool-card h3 { font-size: 1.15rem; }
+        }
+        .btn { white-space: normal; text-align: center; line-height: 1.3; min-height: 44px; }
+        .quick-chip, .category-pill { min-height: 40px; flex-shrink: 0; }
+
+        /* Keep quick-chip row & category pill row horizontally scrollable and 360px clean */
+        .quick-actions-bar,
+        .home-category-tabs {
+          display: flex;
+          flex-wrap: nowrap;
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+        }
+        @media (max-width: 480px) {
+          .btn-subtle, .smart-drop-btn, .result-preview-download-btn {
+            white-space: normal;
+            text-align: center;
+            line-height: 1.25;
+            min-height: 40px;
+          }
+        }
+        @media (max-width: 380px) {
+          .tool-card, .home-tool-card {
+            padding: 10px;
+            gap: 8px;
+          }
+          .locked-bottom-nav {
+            padding-left: 6px;
+            padding-right: 6px;
+          }
+          .bottom-nav-inner {
+            gap: 4px;
+          }
+          .bottom-nav-item {
+            padding: 6px 2px;
+          }
+          .bottom-nav-label {
+            font-size: 9.5px;
+            letter-spacing: 0.01em;
+          }
         }
     </style>
 </head>
