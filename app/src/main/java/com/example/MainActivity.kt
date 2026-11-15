@@ -35,6 +35,8 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -252,7 +254,11 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val isDark by isDarkModeState
-            val currentBg = if (isDark) Color(0xFF141413) else Color(0xFFF4F1EA)
+            val currentBg by animateColorAsState(
+                targetValue = if (isDark) Color(0xFF141413) else Color(0xFFF4F1EA),
+                animationSpec = tween(durationMillis = 350),
+                label = "themeBgColor"
+            )
             MyApplicationTheme(darkTheme = isDark) {
                 Box(
                     modifier = Modifier

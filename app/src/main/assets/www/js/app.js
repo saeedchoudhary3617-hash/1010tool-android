@@ -326,6 +326,7 @@ let files = {
     reverse: null,
     flatten: null,
     imgcompress: [],
+    imgtokb: null,
     batchpdf: []
 };
 
@@ -3072,6 +3073,112 @@ async function processImgCompress() {
     }
 }
 
+function setImgToKBTarget(kb) {
+    const input = document.getElementById('imgtokb-target');
+    if (input) {
+        input.value = kb;
+    }
+    triggerHaptic('click');
+}
+window.setImgToKBTarget = setImgToKBTarget;
+
+async function processImgToKB() {
+    const toolId = 'imgtokb';
+    const file = files.imgtokb;
+    if (!file) return;
+
+    try {
+        const rawTarget = document.getElementById('imgtokb-target')?.value;
+        const targetKB = parseFloat(rawTarget);
+        if (!Number.isFinite(targetKB) || targetKB < 5 || targetKB > 5000) {
+            throw new Error('Please enter a target size between 5 and 5000 KB.');
+        }
+        const targetBytes = Math.round(targetKB * 1024);
+
+        setStatus(toolId, 'loading', `🎯 Resizing photo to ≤ ${targetKB} KB...`);
+        setProgress(toolId, 10);
+        await yieldToMain();
+
+        const img = await loadImageFromFile(file);
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+
+        const drawWhiteCanvas = (w, h) => {
+            canvas.width = w;
+            canvas.height = h;
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(0, 0, w, h);
+            ctx.drawImage(img, 0, 0, w, h);
+        };
+
+        const encodeJpegBlob = (q) => new Promise((resolve, reject) => {
+            canvas.toBlob(
+                blob => blob ? resolve(blob) : reject(new Error('Failed to encode JPEG image.')),
+                'image/jpeg',
+                q
+            );
+        });
+
+        let width = Math.max(1, img.naturalWidth || img.width);
+        let height = Math.max(1, img.naturalHeight || img.height);
+        let resultBlob = null;
+
+        for (let attempt = 0; attempt < 14; attempt++) {
+            await yieldToMain();
+            setProgress(toolId, Math.min(90, 15 + Math.round((attempt / 14) * 75)));
+            drawWhiteCanvas(width, height);
+
+            const highBlob = await encodeJpegBlob(0.95);
+            if (highBlob.size <= targetBytes) {
+                resultBlob = highBlob;
+                break;
+            }
+
+            const lowBlob = await encodeJpegBlob(0.1);
+            if (lowBlob.size <= targetBytes) {
+                let lo = 0.1;
+                let hi = 0.95;
+                let bestBlob = lowBlob;
+                for (let step = 0; step < 7; step++) {
+                    await yieldToMain();
+                    const mid = (lo + hi) / 2;
+                    const midBlob = await encodeJpegBlob(mid);
+                    if (midBlob.size <= targetBytes) {
+                        bestBlob = midBlob;
+                        lo = mid;
+                    } else {
+                        hi = mid;
+                    }
+                }
+                resultBlob = bestBlob;
+                break;
+            }
+
+            const nextW = Math.max(1, Math.round(width * 0.85));
+            const nextH = Math.max(1, Math.round(height * 0.85));
+            if (nextW === width && nextH === height) break;
+            width = nextW;
+            height = nextH;
+        }
+
+        if (!resultBlob) {
+            throw new Error(`Could not fit image within ${targetKB} KB. Please choose a larger target size.`);
+        }
+
+        const originalName = (file.name || 'photo').replace(/\.[^/.]+$/, '') || 'photo';
+        const outputFilename = `${originalName}-${targetKB}KB.jpg`;
+
+        setProgress(toolId, 100);
+        downloadFile(resultBlob, outputFilename, 'image/jpeg');
+        setStatus(toolId, 'success', `🎯 ${formatBytes(file.size)} -> ${formatBytes(resultBlob.size)} (target ${targetKB} KB)`);
+        playSound('success');
+    } catch (e) {
+        setStatus(toolId, 'error', '❌ ' + (e && e.message ? e.message : 'Photo conversion failed.'));
+        playSound('error');
+    }
+}
+window.processImgToKB = processImgToKB;
+
 function loadImageFromFile(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -5207,6 +5314,7 @@ function handleGlobalFileDrop(file) {
         if (icon) icon.innerHTML = '<svg class="upload-icon-svg" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>';
         candidateButtons = [
             { id: 'imgcompress', label: '<svg class="icon-svg" viewBox="0 0 24 24"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="14" y1="10" x2="21" y2="3"/><line x1="3" y1="21" x2="10" y2="14"/></svg> Compress Image' },
+            { id: 'imgtokb', label: '🎯 Photo to KB' },
             { id: 'cropimg', label: '<svg class="icon-svg" viewBox="0 0 24 24"><path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M18 22V8a2 2 0 0 0-2-2H2"/></svg> Crop' },
             { id: 'resizeimg', label: '<svg class="icon-svg" viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg> Resize' },
             { id: 'passport', label: '<svg class="icon-svg" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M15 8h2"/><path d="M15 12h2"/><path d="M7 16h10"/></svg> Passport Photo' },

@@ -147,12 +147,17 @@
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
+        html {
+            background-color: var(--bg);
+            color: var(--text);
+            transition: background-color 0.35s ease, color 0.35s ease;
+        }
         body {
             font-family: var(--font-sans);
-            background: var(--bg);
+            background-color: var(--bg);
             min-height: 100vh;
             color: var(--text);
-            transition: background-color 0.2s ease, color 0.2s ease;
+            transition: background-color 0.35s ease, color 0.35s ease;
             padding: 16px;
             padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px));
             line-height: 1.5;
@@ -510,6 +515,8 @@
             border-radius: 12px;
             color: var(--accent);
             background: var(--bg);
+            font-size: 28px;
+            line-height: 1;
         }
 
         .tool-icon svg {
@@ -544,6 +551,7 @@
                 height: 44px;
                 flex-basis: 44px;
                 border-radius: 9px;
+                font-size: 22px;
             }
             .tool-icon svg { width: 24px; height: 24px; }
         }
@@ -2832,6 +2840,115 @@
             transform: translate(2px, 2px);
             box-shadow: none;
         }
+
+        /* ==========================================================================
+           SMOOTH LIGHT / DARK THEME TRANSITIONS
+           ========================================================================== */
+        .hero-banner-card,
+        .brand-tagline-badge,
+        .home-feature-item,
+        .home-feature-item strong,
+        .home-feature-item p,
+        .tool-top-nav-bar,
+        .tool-nav-badge,
+        .tool-nav-title,
+        .tool-panel,
+        .tool-icon,
+        .tool-name,
+        .home-filter-feedback,
+        .search-results-dropdown,
+        .search-results-header,
+        .settings-section-card,
+        .settings-section-title,
+        .settings-label,
+        .settings-desc,
+        .settings-theme-switcher,
+        .settings-pill-badge,
+        .settings-slider,
+        .result-preview-modal-card,
+        #result-preview-box,
+        .result-preview-details,
+        .result-preview-doc-badge,
+        .global-loading-card,
+        .global-loading-title,
+        .global-loading-text,
+        .qr-result-card,
+        .qr-decoded-text,
+        .qr-mode-nav,
+        .compress-result-box,
+        .compress-stat-pill,
+        .thumbnail-grid,
+        .thumbnail-item .page-num,
+        .pdf-thumb-modal-content,
+        .merge-reorder-banner,
+        .status,
+        h1, h2, h3, h4,
+        .hero-headline,
+        .subtitle,
+        .nav-category-title,
+        label {
+            transition: background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease;
+        }
+
+        .locked-bottom-nav {
+            transition: background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease;
+        }
+
+        .bottom-nav-item,
+        .bottom-nav-label {
+            transition: background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease, box-shadow 0.2s ease, transform 0.1s ease;
+        }
+
+        .theme-toggle-btn {
+            transition: background-color 0.35s ease, color 0.35s ease, border-color 0.25s ease, transform 0.1s ease, box-shadow 0.1s ease;
+        }
+
+        .tool-card,
+        .home-tool-card {
+            transition: background-color 0.35s ease, color 0.35s ease, border-color 0.2s ease;
+        }
+
+        input[type="text"], input[type="password"], input[type="number"], input[type="date"], select, textarea,
+        .bottom-search-input, .tool-search-input {
+            transition: background-color 0.35s ease, color 0.35s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .btn {
+            transition: background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease, transform 0.08s ease, box-shadow 0.08s ease;
+        }
+
+        .btn-subtle,
+        .btn-back-home,
+        .btn-tool-favorite,
+        .settings-btn-action,
+        .settings-theme-btn,
+        .category-pill,
+        .quick-chip,
+        .upload-box,
+        .file-item,
+        .file-item-pdf-card,
+        .qr-mode-btn,
+        .compress-preset-card,
+        .result-preview-close-btn {
+            transition: background-color 0.35s ease, color 0.35s ease, border-color 0.25s ease, box-shadow 0.2s ease, transform 0.12s ease;
+        }
+
+        html.theme-transitioning *,
+        html.theme-transitioning *::before,
+        html.theme-transitioning *::after {
+            transition-property: background-color, color, border-color, fill, stroke !important;
+            transition-duration: 0.35s !important;
+            transition-timing-function: ease !important;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html, body,
+            html.theme-transitioning *,
+            html.theme-transitioning *::before,
+            html.theme-transitioning *::after {
+                transition-duration: 0.01ms !important;
+            }
+        }
     </style>
 </head>
 <body class="on-home-page">
@@ -3013,7 +3130,7 @@
             <!-- Category Filter Tabs -->
             <div class="home-category-tabs" role="tablist" aria-label="Tool Categories">
                 <button type="button" class="category-pill active" id="pill-all" onclick="filterHomeCategory('all', this)" role="tab" aria-selected="true">
-                    <svg class="icon-svg" width="14" height="14" viewBox="0 0 24 24"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg> All Tools <span class="cat-count" id="count-all">30</span>
+                    <svg class="icon-svg" width="14" height="14" viewBox="0 0 24 24"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg> All Tools <span class="cat-count" id="count-all">37</span>
                 </button>
                 <button type="button" class="category-pill" id="pill-fav" onclick="filterHomeCategory('fav', this)" role="tab" aria-selected="false">
                     <svg class="icon-svg" width="14" height="14" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Pinned <span class="cat-count" id="count-fav">4</span>
@@ -3022,10 +3139,10 @@
                     <svg class="icon-svg" width="14" height="14" viewBox="0 0 24 24"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg> PDF Tools <span class="cat-count" id="count-pdf">20</span>
                 </button>
                 <button type="button" class="category-pill" id="pill-image" onclick="filterHomeCategory('image', this)" role="tab" aria-selected="false">
-                    <svg class="icon-svg" width="14" height="14" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg> Image & PNG <span class="cat-count" id="count-image">6</span>
+                    <svg class="icon-svg" width="14" height="14" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg> Image & PNG <span class="cat-count" id="count-image">7</span>
                 </button>
                 <button type="button" class="category-pill" id="pill-converter" onclick="filterHomeCategory('converter', this)" role="tab" aria-selected="false">
-                    <svg class="icon-svg" width="14" height="14" viewBox="0 0 24 24"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg> Converters <span class="cat-count" id="count-converter">8</span>
+                    <svg class="icon-svg" width="14" height="14" viewBox="0 0 24 24"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg> Converters <span class="cat-count" id="count-converter">9</span>
                 </button>
                 <button type="button" class="category-pill" id="pill-utility" onclick="filterHomeCategory('utility', this)" role="tab" aria-selected="false">
                     <svg class="icon-svg" width="14" height="14" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg> Utilities <span class="cat-count" id="count-utility">6</span>
@@ -3142,6 +3259,10 @@
                 <button type="button" class="tool-card" data-tool="imgcompress" aria-label="Compress Images">
                     <span class="tool-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="14" y1="10" x2="21" y2="3"/><line x1="3" y1="21" x2="10" y2="14"/></svg></span>
                     <span class="tool-name">Compress<br>Images</span>
+                </button>
+                <button type="button" class="tool-card" data-tool="imgtokb" aria-label="Photo to KB Converter">
+                    <span class="tool-icon" aria-hidden="true">🎯</span>
+                    <span class="tool-name">Photo to<br>KB Converter</span>
                 </button>
                 <button type="button" class="tool-card" data-tool="joinimg" aria-label="Photo Collage">
                     <span class="tool-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="12" y1="3" x2="12" y2="21"/></svg></span>
@@ -3749,6 +3870,34 @@
             <div class="progress-container" id="imgcompress-prog"><div class="progress-fill"></div></div>
         </div>
 
+        <!-- PHOTO TO KB CONVERTER -->
+        <div id="imgtokb" class="tool-panel">
+            <h3><span class="emoji">🎯</span> Photo to KB Converter</h3>
+            <p style="color: var(--text-light); font-size: 0.88rem; margin-bottom: 14px;">Resize a photo or signature to an exact size in KB (20, 50, 100, 200 KB) for exam and form uploads.</p>
+            <div class="upload-box">
+                <input type="file" id="imgtokb-input" accept="image/*" aria-label="Select photo or signature to convert to target KB" onchange="handleFiles(this, 'imgtokb')" />
+                <div><svg class="upload-icon-svg" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+                <div><strong>Select Photo or Signature</strong></div>
+                <div class="upload-hint">Processed locally in your browser. Transparent PNGs flatten onto a clean white background.</div>
+            </div>
+            <div class="file-list" id="imgtokb-list"></div>
+            <div class="options" style="flex-direction: column; align-items: stretch; gap: 12px;">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;">
+                    <label for="imgtokb-target">Target size (KB):</label>
+                    <input type="number" id="imgtokb-target" aria-label="Target size (KB)" value="50" min="5" max="5000" step="1" style="width: 130px; font-family: 'JetBrains Mono', monospace; background: var(--surface); border: 1px solid var(--border); color: var(--text);" />
+                </div>
+                <div style="display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;">
+                    <button type="button" class="btn-subtle" onclick="setImgToKBTarget(20)" aria-label="Set target size to 20 KB">20 KB</button>
+                    <button type="button" class="btn-subtle" onclick="setImgToKBTarget(50)" aria-label="Set target size to 50 KB">50 KB</button>
+                    <button type="button" class="btn-subtle" onclick="setImgToKBTarget(100)" aria-label="Set target size to 100 KB">100 KB</button>
+                    <button type="button" class="btn-subtle" onclick="setImgToKBTarget(200)" aria-label="Set target size to 200 KB">200 KB</button>
+                </div>
+            </div>
+            <button class="btn" id="imgtokb-btn" onclick="processImgToKB()" aria-label="Resize and Download" disabled>🎯 Resize &amp; Download</button>
+            <div class="status" id="imgtokb-status"></div>
+            <div class="progress-container" id="imgtokb-prog"><div class="progress-fill"></div></div>
+        </div>
+
         <!-- BATCH RENAME -->
         <div id="rename" class="tool-panel">
             <h3><span class="emoji"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></span> Batch Rename</h3>
@@ -4226,8 +4375,22 @@
             return 'light';
         }
 
-        function applyTheme(theme, save = false) {
+        let themeTransitionTimer = null;
+
+        function applyTheme(theme, save = false, animate = true) {
             const isDark = (theme === 'dark');
+
+            if (animate) {
+                try {
+                    const root = document.documentElement;
+                    root.classList.add('theme-transitioning');
+                    if (themeTransitionTimer) clearTimeout(themeTransitionTimer);
+                    themeTransitionTimer = setTimeout(() => {
+                        root.classList.remove('theme-transitioning');
+                        themeTransitionTimer = null;
+                    }, 380);
+                } catch (_) {}
+            }
 
             // 1. Update HTML and Body classes & attributes
             if (isDark) {
@@ -4289,7 +4452,7 @@
             } catch (_) {}
             const currentIsDark = document.documentElement.classList.contains('dark') || (document.body && document.body.classList.contains('dark'));
             const newTheme = currentIsDark ? 'light' : 'dark';
-            applyTheme(newTheme, true);
+            applyTheme(newTheme, true, true);
 
             // Tactile feedback
             try {
@@ -4310,12 +4473,12 @@
         (function initThemeEngine() {
             const saved = getStoredTheme();
             const initialTheme = saved ? saved : getSystemPreferredTheme();
-            applyTheme(initialTheme, false);
+            applyTheme(initialTheme, false, false);
 
             // Cross-tab and cross-session storage synchronization
             window.addEventListener('storage', (e) => {
                 if (e.key === THEME_STORAGE_KEY && e.newValue) {
-                    applyTheme(e.newValue, false);
+                    applyTheme(e.newValue, false, true);
                 }
             });
 
@@ -4382,6 +4545,7 @@
             { id: 'resizeimg', title: 'Resize Image', displayTitle: 'Resize<br>Image', category: 'Image Tools', cat: 'image', format: 'PX / %', icon: '<svg viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>', desc: 'Scale image dimensions in pixels or percentage with aspect ratio lock.' },
             { id: 'passport', title: 'Passport Photo Maker', displayTitle: 'Passport<br>Photo Maker', category: 'Image Tools', cat: 'image', format: '300 DPI / A4', icon: '<svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>', desc: 'Create standard biometric passport photos with A4 print sheet grid.', badge: 'Popular' },
             { id: 'imgcompress', title: 'Compress Images', displayTitle: 'Compress<br>Images', category: 'Image Tools', cat: 'image', format: 'JPG / WEBP', icon: '<svg viewBox="0 0 24 24"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="14" y1="10" x2="21" y2="3"/><line x1="3" y1="21" x2="10" y2="14"/></svg>', desc: 'Compress JPEG, PNG, and WebP images with custom target KB control.', isConverter: true },
+            { id: 'imgtokb', title: 'Photo to KB Converter', displayTitle: 'Photo to<br>KB Converter', category: 'Image Tools', cat: 'image', format: 'TARGET KB', icon: '🎯', desc: 'Resize a photo or signature to an exact size in KB (20, 50, 100, 200 KB) for exam and form uploads.', badge: 'New', isConverter: true },
             { id: 'joinimg', title: 'Photo Collage & Joiner', displayTitle: 'Photo<br>Collage', category: 'Image Tools', cat: 'image', format: 'PNG', icon: '<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="12" y1="3" x2="12" y2="21"/></svg>', desc: 'Combine multiple images side-by-side or stacked in a collage layout.' },
 
             // Utilities

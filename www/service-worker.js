@@ -1,4 +1,4 @@
-const CACHE_NAME = '1010tool-v1';
+const CACHE_NAME = '1010tool-v2';
 const STATIC_ASSETS = [
   './',
   './index.html',
