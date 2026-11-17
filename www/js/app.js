@@ -3,6 +3,12 @@
  * 100% Client-side, Secure, Privacy-First
  */
 
+const APP_VERSION = '2.5.0';
+const UPDATE_API = 'https://cdtxhdhhenhibzgcycqf.supabase.co/rest/v1/releases?select=version,file_path&order=created_at.desc&limit=1';
+const UPDATE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNkdHhoZGhoZW5oaWJ6Z2N5Y3FmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ2NDI2MzcsImV4cCI6MjExMDIxODYzN30.MkS0biIE4JKzjYQ1aTqM5THLE_Ke_uNReVeDa-lPikE';
+const UPDATE_FILE_BASE = 'https://cdtxhdhhenhibzgcycqf.supabase.co/storage/v1/object/public/apks/';
+window.APP_VERSION = APP_VERSION;
+
 // ==========================================
 // 0. ERROR LOGGER & DIAGNOSTIC CONSOLE OVERLAY
 // ==========================================
@@ -5400,10 +5406,298 @@ function launchWithDroppedFile(toolId) {
     }, 150);
 }
 
+// ==========================================
+// ENGAGEMENT: VERSION SYNC, ONBOARDING & UPDATE CHECKER
+// ==========================================
+
+const ONBOARDED_STORAGE_KEY = '1010_onboarded';
+const UPDATE_LAST_CHECK_KEY = '1010_last_update_check';
+const UPDATE_DISMISSED_KEY = '1010_dismissed_update_version';
+const UPDATE_CACHED_RELEASE_KEY = '1010_cached_release';
+const UPDATE_CHECK_INTERVAL_MS = 6 * 60 * 60 * 1000;
+
+function syncAppVersionUI() {
+    try {
+        const versionEl = document.getElementById('settingsAppVersion');
+        if (versionEl) {
+            versionEl.innerText = 'v' + APP_VERSION;
+        }
+    } catch (_) {}
+}
+window.syncAppVersionUI = syncAppVersionUI;
+
+const ONBOARDING_SLIDES = [
+    {
+        step: '01 / 04',
+        title: 'Welcome to 1010 Tools',
+        body: '30+ PDF, image and utility tools in one app.',
+        svg: '<svg viewBox="0 0 64 64" width="56" height="56" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="10" y="10" width="18" height="18" rx="4"/><rect x="36" y="10" width="18" height="18" rx="4"/><rect x="10" y="36" width="18" height="18" rx="4"/><path d="M45 36v18M36 45h18"/></svg>'
+    },
+    {
+        step: '02 / 04',
+        title: 'Local & Private',
+        body: 'Your files are processed on your phone and never uploaded.',
+        svg: '<svg viewBox="0 0 64 64" width="56" height="56" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M32 8L12 16v14c0 13.5 8.5 25.5 20 29 11.5-3.5 20-15.5 20-29V16L32 8z"/><path d="M23 32l6 6 12-13"/></svg>'
+    },
+    {
+        step: '03 / 04',
+        title: 'Find tools fast',
+        body: 'Use search and the All / PDF / Images / Convert tabs.',
+        svg: '<svg viewBox="0 0 64 64" width="56" height="56" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="28" cy="28" r="16"/><path d="M40 40l14 14"/><path d="M21 28h14"/></svg>'
+    },
+    {
+        step: '04 / 04',
+        title: 'Pin your favourites',
+        body: 'Tap the star on any tool to keep it at the top of Home.',
+        svg: '<svg viewBox="0 0 64 64" width="56" height="56" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="32 9 39.1 23.4 55 25.7 43.5 36.9 46.2 52.7 32 45.2 17.8 52.7 20.5 36.9 9 25.7 24.9 23.4 32 9"/></svg>'
+    }
+];
+
+let onboardingSlideIndex = 0;
+
+function renderOnboardingSlide() {
+    const slide = ONBOARDING_SLIDES[onboardingSlideIndex] || ONBOARDING_SLIDES[0];
+    const stepEl = document.getElementById('onboardingStepLabel');
+    const iconEl = document.getElementById('onboardingSlideIcon');
+    const titleEl = document.getElementById('onboardingSlideTitle');
+    const bodyEl = document.getElementById('onboardingSlideBody');
+    const nextBtn = document.getElementById('onboardingNextBtn');
+    const dotsWrap = document.getElementById('onboardingDots');
+
+    if (stepEl) stepEl.innerText = slide.step;
+    if (iconEl) iconEl.innerHTML = slide.svg;
+    if (titleEl) titleEl.innerText = slide.title;
+    if (bodyEl) bodyEl.innerText = slide.body;
+
+    const isLast = onboardingSlideIndex >= ONBOARDING_SLIDES.length - 1;
+    if (nextBtn) {
+        nextBtn.innerText = isLast ? 'Get started' : 'Next';
+        nextBtn.setAttribute('aria-label', isLast ? 'Get started' : 'Next slide');
+    }
+
+    if (dotsWrap) {
+        dotsWrap.innerHTML = ONBOARDING_SLIDES.map((_, idx) => `
+            <button type="button"
+                    class="onboarding-dot-btn ${idx === onboardingSlideIndex ? 'active' : ''}"
+                    onclick="setOnboardingSlide(${idx})"
+                    aria-label="Go to slide ${idx + 1}"
+                    aria-current="${idx === onboardingSlideIndex ? 'step' : 'false'}">
+                <span class="onboarding-dot-pill"></span>
+            </button>
+        `).join('');
+    }
+}
+
+function showOnboardingGuide(fromSettings = false) {
+    const overlay = document.getElementById('onboardingOverlay');
+    if (!overlay) return;
+    onboardingSlideIndex = 0;
+    renderOnboardingSlide();
+    overlay.classList.add('active');
+    overlay.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('onboarding-open');
+    if (fromSettings && typeof triggerHaptic === 'function') {
+        triggerHaptic('click');
+    }
+}
+window.showOnboardingGuide = showOnboardingGuide;
+
+function setOnboardingSlide(index) {
+    if (index < 0 || index >= ONBOARDING_SLIDES.length) return;
+    onboardingSlideIndex = index;
+    renderOnboardingSlide();
+    if (typeof playSound === 'function') {
+        try { playSound('click'); } catch (_) {}
+    }
+    if (typeof triggerHaptic === 'function') triggerHaptic('click');
+}
+window.setOnboardingSlide = setOnboardingSlide;
+
+function nextOnboardingSlide() {
+    if (onboardingSlideIndex < ONBOARDING_SLIDES.length - 1) {
+        setOnboardingSlide(onboardingSlideIndex + 1);
+    } else {
+        dismissOnboardingGuide(true);
+    }
+}
+window.nextOnboardingSlide = nextOnboardingSlide;
+
+function dismissOnboardingGuide(markCompleted = true) {
+    const overlay = document.getElementById('onboardingOverlay');
+    if (overlay) {
+        overlay.classList.remove('active');
+        overlay.setAttribute('aria-hidden', 'true');
+    }
+    document.body.classList.remove('onboarding-open');
+    if (markCompleted) {
+        try {
+            localStorage.setItem(ONBOARDED_STORAGE_KEY, 'true');
+        } catch (_) {}
+    }
+    if (typeof playSound === 'function') {
+        try { playSound('success'); } catch (_) {}
+    }
+    if (typeof triggerHaptic === 'function') triggerHaptic('light');
+}
+window.dismissOnboardingGuide = dismissOnboardingGuide;
+
+function maybeShowFirstRunGuide() {
+    try {
+        if (!localStorage.getItem(ONBOARDED_STORAGE_KEY)) {
+            showOnboardingGuide(false);
+        }
+    } catch (_) {}
+}
+
+let pendingReleaseInfo = null;
+
+function normalizeVersionString(ver) {
+    return String(ver || '').trim().replace(/^v/i, '');
+}
+
+function compareDottedVersions(a, b) {
+    const partsA = normalizeVersionString(a).split('.').map(s => {
+        const n = parseInt(s, 10);
+        return Number.isFinite(n) ? n : 0;
+    });
+    const partsB = normalizeVersionString(b).split('.').map(s => {
+        const n = parseInt(s, 10);
+        return Number.isFinite(n) ? n : 0;
+    });
+    const len = Math.max(partsA.length, partsB.length);
+    for (let i = 0; i < len; i++) {
+        const va = partsA[i] || 0;
+        const vb = partsB[i] || 0;
+        if (va > vb) return 1;
+        if (va < vb) return -1;
+    }
+    return 0;
+}
+
+function renderUpdateBanner(release) {
+    try {
+        const banner = document.getElementById('homeUpdateBanner');
+        const textEl = document.getElementById('homeUpdateBannerText');
+        if (!banner || !textEl) return;
+
+        if (!release || !release.version) {
+            banner.style.display = 'none';
+            return;
+        }
+
+        const latest = normalizeVersionString(release.version);
+        if (!latest || compareDottedVersions(latest, APP_VERSION) <= 0) {
+            banner.style.display = 'none';
+            return;
+        }
+
+        const dismissed = normalizeVersionString(localStorage.getItem(UPDATE_DISMISSED_KEY));
+        if (dismissed && dismissed === latest) {
+            banner.style.display = 'none';
+            return;
+        }
+
+        pendingReleaseInfo = {
+            version: latest,
+            file_path: String(release.file_path || '')
+        };
+        textEl.innerText = `Update available: v${latest}`;
+        banner.style.display = 'flex';
+    } catch (_) {}
+}
+
+function openUpdateDownload() {
+    try {
+        if (!pendingReleaseInfo || !pendingReleaseInfo.file_path) return;
+        const apkUrl = UPDATE_FILE_BASE + encodeURIComponent(pendingReleaseInfo.file_path);
+        if (typeof triggerHaptic === 'function') triggerHaptic('click');
+        if (window.AndroidBridge && typeof window.AndroidBridge.openExternalUrl === 'function') {
+            window.AndroidBridge.openExternalUrl(apkUrl);
+        } else {
+            window.open(apkUrl, '_blank', 'noopener,noreferrer');
+        }
+    } catch (_) {}
+}
+window.openUpdateDownload = openUpdateDownload;
+
+function dismissUpdateBanner() {
+    try {
+        if (pendingReleaseInfo && pendingReleaseInfo.version) {
+            localStorage.setItem(UPDATE_DISMISSED_KEY, pendingReleaseInfo.version);
+        }
+        const banner = document.getElementById('homeUpdateBanner');
+        if (banner) banner.style.display = 'none';
+        if (typeof triggerHaptic === 'function') triggerHaptic('click');
+    } catch (_) {}
+}
+window.dismissUpdateBanner = dismissUpdateBanner;
+
+async function checkForAppUpdate() {
+    try {
+        try {
+            const cachedRaw = localStorage.getItem(UPDATE_CACHED_RELEASE_KEY);
+            if (cachedRaw) {
+                const cached = JSON.parse(cachedRaw);
+                renderUpdateBanner(cached);
+            }
+        } catch (_) {}
+
+        const now = Date.now();
+        let lastCheck = 0;
+        try {
+            lastCheck = parseInt(localStorage.getItem(UPDATE_LAST_CHECK_KEY) || '0', 10) || 0;
+        } catch (_) {}
+
+        if (lastCheck && (now - lastCheck) < UPDATE_CHECK_INTERVAL_MS) {
+            return;
+        }
+
+        if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+            return;
+        }
+
+        try {
+            localStorage.setItem(UPDATE_LAST_CHECK_KEY, String(now));
+        } catch (_) {}
+
+        const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+        const timeoutId = controller ? setTimeout(() => controller.abort(), 4000) : null;
+
+        try {
+            const response = await fetch(UPDATE_API, {
+                method: 'GET',
+                headers: {
+                    apikey: UPDATE_KEY,
+                    Authorization: 'Bearer ' + UPDATE_KEY
+                },
+                signal: controller ? controller.signal : undefined
+            });
+            if (!response.ok) return;
+            const rows = await response.json();
+            if (!Array.isArray(rows) || rows.length === 0) return;
+            const latestRow = rows[0];
+            if (!latestRow || !latestRow.version || !latestRow.file_path) return;
+            const release = {
+                version: normalizeVersionString(latestRow.version),
+                file_path: String(latestRow.file_path)
+            };
+            try {
+                localStorage.setItem(UPDATE_CACHED_RELEASE_KEY, JSON.stringify(release));
+            } catch (_) {}
+            renderUpdateBanner(release);
+        } finally {
+            if (timeoutId) clearTimeout(timeoutId);
+        }
+    } catch (_) {
+        // Silent failure when offline or unreachable
+    }
+}
+
 // Initialize on DOM Ready or immediately if loaded
 function initApp() {
     try {
         initDebugOverlay();
+        syncAppVersionUI();
         if (typeof pdfjsLib !== 'undefined' && pdfjsLib.GlobalWorkerOptions) {
             pdfjsLib.GlobalWorkerOptions.workerSrc = 'libs/pdf.worker.min.js';
         }
@@ -5415,6 +5709,7 @@ function initApp() {
             if (toolGridEl && toolGridEl.dataset.boundClick !== 'true') {
                 toolGridEl.dataset.boundClick = 'true';
                 toolGridEl.addEventListener('click', (e) => {
+                    if (e.target.closest('.btn-fav-star')) return;
                     const card = e.target.closest('.tool-card[data-tool]');
                     if (!card) return;
                     const toolName = card.getAttribute('data-tool');
@@ -5437,6 +5732,8 @@ function initApp() {
             generatePassword();
         }
         updateDebugDependencies();
+        maybeShowFirstRunGuide();
+        checkForAppUpdate();
     } catch (e) {
         errorLogger.record({
             type: 'INITIALIZATION_ERROR',

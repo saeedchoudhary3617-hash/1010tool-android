@@ -3115,6 +3115,363 @@
             letter-spacing: 0.01em;
           }
         }
+
+        /* ===== Engagement Features: Update Banner, Pinned Home & Onboarding Guide ===== */
+        .home-update-banner {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+          flex-wrap: wrap;
+          padding: 12px 14px;
+          margin-bottom: 14px;
+          background: var(--surface);
+          border: 1px solid var(--accent);
+          border-radius: 10px;
+          box-shadow: var(--shadow);
+        }
+        .home-update-info {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          min-width: 0;
+          flex: 1 1 180px;
+        }
+        .home-update-dot {
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          background: var(--accent);
+          flex-shrink: 0;
+        }
+        .home-update-text {
+          font-family: var(--font-mono);
+          font-size: 0.84rem;
+          font-weight: 600;
+          color: var(--text);
+          overflow-wrap: anywhere;
+        }
+        .home-update-actions {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          flex-shrink: 0;
+        }
+        .home-update-btn {
+          font-family: var(--font-mono);
+          font-size: 0.78rem;
+          font-weight: 600;
+          min-height: 44px;
+          padding: 8px 14px;
+          border-radius: 6px;
+          cursor: pointer;
+          touch-action: manipulation;
+          transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+        }
+        .home-update-btn-primary {
+          background: var(--accent);
+          color: #FAF8F5;
+          border: 1px solid var(--accent);
+          box-shadow: var(--shadow-sm);
+        }
+        .home-update-btn-later {
+          background: var(--bg);
+          color: var(--text);
+          border: 1px solid var(--border);
+        }
+        @media (hover: hover) {
+          .home-update-btn-primary:hover {
+            background: var(--accent-hover);
+            border-color: var(--accent-hover);
+          }
+          .home-update-btn-later:hover {
+            border-color: var(--text);
+          }
+        }
+
+        /* Pinned section & card star button */
+        .home-pinned-section {
+          margin: 16px 0 8px;
+        }
+        .home-section-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 10px;
+          margin-bottom: 10px;
+        }
+        .home-section-title {
+          font-family: var(--font-serif);
+          font-size: 1.45rem;
+          font-weight: 400;
+          color: var(--text);
+          line-height: 1.15;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+        .home-section-count {
+          font-family: var(--font-mono);
+          font-size: 0.74rem;
+          font-weight: 600;
+          padding: 2px 8px;
+          border-radius: 4px;
+          background: var(--accent-light);
+          color: var(--accent);
+          border: 1px solid var(--accent);
+        }
+        .home-pinned-hint {
+          font-size: 0.84rem;
+          color: var(--text-light);
+          padding: 10px 12px;
+          background: var(--surface);
+          border: 1px dashed var(--border);
+          border-radius: 8px;
+          margin-bottom: 10px;
+        }
+        .home-all-section-label {
+          font-family: var(--font-mono);
+          font-size: 0.74rem;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.06em;
+          color: var(--text-muted);
+          margin: 14px 0 6px;
+        }
+        .home-pinned-section .tool-grid {
+          margin: 8px 0 12px;
+        }
+
+        .tool-card {
+          position: relative;
+          padding-right: 54px;
+        }
+        .btn-fav-star {
+          position: absolute;
+          top: 6px;
+          right: 6px;
+          width: 44px;
+          height: 44px;
+          min-width: 44px;
+          min-height: 44px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          border: none;
+          border-radius: 10px;
+          background: transparent;
+          color: var(--text-muted);
+          cursor: pointer;
+          touch-action: manipulation;
+          z-index: 2;
+          padding: 0;
+          transition: background-color 0.2s ease, color 0.2s ease;
+        }
+        .btn-fav-star.is-pinned {
+          color: var(--accent);
+        }
+        @media (hover: hover) {
+          .btn-fav-star:hover {
+            background: var(--accent-light);
+            color: var(--accent);
+          }
+        }
+        @media (max-width: 520px) {
+          .tool-card, .home-tool-card {
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: flex-start;
+            padding: 12px;
+            gap: 10px;
+            min-height: 112px;
+          }
+          .tool-card .tool-name, .home-tool-card .tool-name {
+            width: 100%;
+          }
+          .btn-fav-star {
+            top: 4px;
+            right: 4px;
+          }
+        }
+        @media (max-width: 380px) {
+          .tool-card, .home-tool-card {
+            padding: 10px;
+            gap: 8px;
+            min-height: 108px;
+          }
+          .tool-card .tool-name, .home-tool-card .tool-name {
+            font-size: 1.05rem;
+            line-height: 1.15;
+          }
+        }
+
+        /* First-run onboarding overlay */
+        body.onboarding-open {
+          overflow: hidden;
+        }
+        .onboarding-overlay {
+          position: fixed;
+          inset: 0;
+          z-index: 10100;
+          background: var(--bg);
+          color: var(--text);
+          display: none;
+          align-items: center;
+          justify-content: center;
+          padding: 20px;
+          transition: background-color 0.35s ease, color 0.35s ease;
+        }
+        .onboarding-overlay.active {
+          display: flex;
+        }
+        .onboarding-card {
+          width: 100%;
+          max-width: 420px;
+          background: var(--surface);
+          border: 1px solid var(--border);
+          border-radius: 16px;
+          box-shadow: var(--shadow-md);
+          padding: 22px;
+          display: flex;
+          flex-direction: column;
+          gap: 18px;
+        }
+        .onboarding-top-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+        }
+        .onboarding-step {
+          font-family: var(--font-mono);
+          font-size: 0.78rem;
+          font-weight: 600;
+          color: var(--accent);
+          letter-spacing: 0.05em;
+        }
+        .onboarding-btn-skip {
+          font-family: var(--font-mono);
+          font-size: 0.82rem;
+          font-weight: 600;
+          color: var(--text-light);
+          background: transparent;
+          border: 1px solid transparent;
+          border-radius: 6px;
+          min-height: 44px;
+          min-width: 56px;
+          padding: 8px 12px;
+          cursor: pointer;
+          touch-action: manipulation;
+        }
+        @media (hover: hover) {
+          .onboarding-btn-skip:hover {
+            color: var(--text);
+            border-color: var(--border);
+          }
+        }
+        .onboarding-visual {
+          width: 92px;
+          height: 92px;
+          margin: 8px auto 0;
+          border-radius: 18px;
+          background: var(--accent-light);
+          border: 1px solid var(--accent);
+          color: var(--accent);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: var(--shadow);
+        }
+        .onboarding-copy {
+          text-align: center;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          padding: 4px 4px 8px;
+        }
+        .onboarding-title {
+          font-family: var(--font-serif);
+          font-size: 1.9rem;
+          font-weight: 400;
+          line-height: 1.15;
+          color: var(--text);
+          overflow-wrap: anywhere;
+        }
+        .onboarding-body {
+          font-family: var(--font-sans);
+          font-size: 0.96rem;
+          line-height: 1.5;
+          color: var(--text-light);
+          overflow-wrap: anywhere;
+        }
+        .onboarding-footer {
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
+          padding-top: 8px;
+          border-top: 1px solid var(--border);
+        }
+        .onboarding-dots {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 4px;
+        }
+        .onboarding-dot-btn {
+          min-width: 34px;
+          min-height: 44px;
+          background: transparent;
+          border: none;
+          padding: 0;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          touch-action: manipulation;
+        }
+        .onboarding-dot-pill {
+          width: 8px;
+          height: 8px;
+          border-radius: 999px;
+          background: var(--border);
+          transition: width 0.2s ease, background-color 0.2s ease;
+        }
+        .onboarding-dot-btn.active .onboarding-dot-pill {
+          width: 24px;
+          background: var(--accent);
+        }
+        .onboarding-btn-primary {
+          width: 100%;
+          min-height: 48px;
+          padding: 12px 20px;
+          border-radius: 8px;
+          border: 1px solid var(--accent);
+          background: var(--accent);
+          color: #FAF8F5;
+          font-family: var(--font-sans);
+          font-size: 0.98rem;
+          font-weight: 600;
+          cursor: pointer;
+          touch-action: manipulation;
+          box-shadow: var(--shadow);
+        }
+        @media (hover: hover) {
+          .onboarding-btn-primary:hover {
+            background: var(--accent-hover);
+            border-color: var(--accent-hover);
+          }
+        }
+        @media (pointer: coarse) {
+          .btn-fav-star:active,
+          .home-update-btn:active,
+          .onboarding-btn-skip:active,
+          .onboarding-dot-btn:active,
+          .onboarding-btn-primary:active {
+            transform: none !important;
+            box-shadow: none !important;
+            opacity: 0.85;
+          }
+        }
     </style>
 </head>
 <body class="on-home-page">
@@ -3265,6 +3622,18 @@
 
         <!-- HOME DASHBOARD PANEL -->
         <div id="home" class="tool-panel active">
+            <!-- Dismissible Update Available Banner -->
+            <div id="homeUpdateBanner" class="home-update-banner" role="region" aria-label="App update available" style="display:none;">
+                <div class="home-update-info">
+                    <span class="home-update-dot" aria-hidden="true"></span>
+                    <span class="home-update-text" id="homeUpdateBannerText">Update available</span>
+                </div>
+                <div class="home-update-actions">
+                    <button type="button" class="home-update-btn home-update-btn-primary" onclick="openUpdateDownload()" aria-label="Download latest update">Update</button>
+                    <button type="button" class="home-update-btn home-update-btn-later" onclick="dismissUpdateBanner()" aria-label="Dismiss update notice for now">Later</button>
+                </div>
+            </div>
+
             <!-- Top Search Bar -->
             <div class="home-top-search-wrap" id="homeSearchContainer">
                 <div class="bottom-search-inner">
@@ -3323,6 +3692,10 @@
                 <span id="homeFilterText">Found 0 tools</span>
                 <button type="button" onclick="clearHomeSearch()" class="btn-clear-filter">Show all tools</button>
             </div>
+
+            <!-- Pinned Favorites Grid Section (shown on All Tools tab when search is empty) -->
+            <div id="homePinnedSection" class="home-pinned-section" style="display:none;"></div>
+            <div id="homeAllSectionLabel" class="home-all-section-label" style="display:none;">All Tools</div>
 
             <!-- Tool Catalog Grid -->
             <div class="tool-grid home-tools-grid" id="toolGrid">
@@ -4400,6 +4773,17 @@
                             </div>
                         </div>
                     </div>
+                    <div class="settings-row">
+                        <div class="settings-info">
+                            <div class="settings-label">Welcome Guide</div>
+                            <div class="settings-desc">Replay the 4-step introduction to 1010 Tools</div>
+                        </div>
+                        <div class="settings-control">
+                            <button type="button" class="settings-btn-action" id="settingsShowGuideBtn" onclick="showOnboardingGuide(true)" aria-label="Show guide again">
+                                <svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Show guide again
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Section 2: Audio & Feedback -->
@@ -4442,6 +4826,7 @@
                         <div class="settings-info">
                             <div class="settings-label">Processing Engine</div>
                             <div class="settings-desc">Files and images never leave your device; zero server uploads</div>
+                            <div class="settings-desc" style="margin-top: 4px;">Checks for updates by asking only for the latest version number. Your files never leave your phone.</div>
                         </div>
                         <div class="settings-control">
                             <span class="settings-pill-badge">100% Client-Side</span>
@@ -4482,7 +4867,7 @@
                             <div class="settings-desc">High-speed offline-first PDF, Image, Converter and Developer utilities</div>
                         </div>
                         <div class="settings-control">
-                            <span style="font-size: 0.82rem; font-weight: 600; font-family: 'JetBrains Mono', monospace; color: var(--text-muted);">v2.4.0</span>
+                            <span id="settingsAppVersion" style="font-size: 0.82rem; font-weight: 600; font-family: 'JetBrains Mono', monospace; color: var(--text-muted);">v2.5.0</span>
                         </div>
                     </div>
                 </div>
@@ -4883,11 +5268,11 @@
             renderHomeToolsGrid(currentHomeCategory, '');
         }
 
-        function bindToolGridListener() {
-            const grid = document.getElementById('toolGrid') || document.getElementById('homeToolsGrid');
-            if (!grid || grid.dataset.boundClick === 'true') return;
-            grid.dataset.boundClick = 'true';
-            grid.addEventListener('click', (e) => {
+        function attachGridDelegation(container) {
+            if (!container || container.dataset.boundClick === 'true') return;
+            container.dataset.boundClick = 'true';
+            container.addEventListener('click', (e) => {
+                if (e.target.closest('.btn-fav-star')) return;
                 const card = e.target.closest('.tool-card[data-tool]');
                 if (!card) return;
                 const toolName = card.getAttribute('data-tool');
@@ -4895,16 +5280,84 @@
                     showTool(toolName, card);
                 }
             });
+            container.addEventListener('keydown', (e) => {
+                if (e.key !== 'Enter' && e.key !== ' ') return;
+                if (e.target.closest('.btn-fav-star')) return;
+                const card = e.target.closest('.tool-card[data-tool]');
+                if (!card) return;
+                e.preventDefault();
+                const toolName = card.getAttribute('data-tool');
+                if (toolName && typeof showTool === 'function') {
+                    showTool(toolName, card);
+                }
+            });
+        }
+
+        function bindToolGridListener() {
+            const grid = document.getElementById('toolGrid') || document.getElementById('homeToolsGrid');
+            const pinnedSection = document.getElementById('homePinnedSection');
+            attachGridDelegation(grid);
+            attachGridDelegation(pinnedSection);
         }
         window.bindToolGridListener = bindToolGridListener;
 
+        function buildToolCardMarkup(t, favIds) {
+            const isPinned = favIds.includes(t.id);
+            const starSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="${isPinned ? 'var(--accent)' : 'none'}" stroke="${isPinned ? 'var(--accent)' : 'currentColor'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+            return `
+                <div class="tool-card" data-tool="${t.id}" role="button" tabindex="0" aria-label="Open ${escapeHtml(t.title)}">
+                    <button type="button"
+                            class="btn-fav-star ${isPinned ? 'is-pinned' : ''}"
+                            onclick="toggleFavoriteTool('${t.id}', event)"
+                            aria-label="${isPinned ? 'Unpin ' : 'Pin '}${escapeHtml(t.title)}"
+                            aria-pressed="${isPinned ? 'true' : 'false'}">
+                        ${starSvg}
+                    </button>
+                    <span class="tool-icon" aria-hidden="true">${t.icon}</span>
+                    <span class="tool-name">${t.displayTitle || escapeHtml(t.title)}</span>
+                </div>
+            `;
+        }
+
         function renderHomeToolsGrid(filterCategory = 'all', searchQuery = '') {
             const grid = document.getElementById('toolGrid') || document.getElementById('homeToolsGrid');
+            const pinnedSection = document.getElementById('homePinnedSection');
+            const allSectionLabel = document.getElementById('homeAllSectionLabel');
             if (!grid) return;
             bindToolGridListener();
 
             const query = (searchQuery || '').trim().toLowerCase();
             const favIds = getFavoriteTools();
+
+            if (pinnedSection) {
+                if (filterCategory === 'all' && !query) {
+                    const favTools = favIds.map(id => ALL_TOOLS_CATALOG.find(t => t.id === id)).filter(Boolean);
+                    pinnedSection.style.display = 'block';
+                    if (favTools.length > 0) {
+                        pinnedSection.innerHTML = `
+                            <div class="home-section-header">
+                                <h2 class="home-section-title">Pinned <span class="home-section-count">${favTools.length}</span></h2>
+                            </div>
+                            <div class="tool-grid home-tools-grid">
+                                ${favTools.map(t => buildToolCardMarkup(t, favIds)).join('')}
+                            </div>
+                        `;
+                        if (allSectionLabel) allSectionLabel.style.display = 'block';
+                    } else {
+                        pinnedSection.innerHTML = `
+                            <div class="home-section-header">
+                                <h2 class="home-section-title">Pinned <span class="home-section-count">0</span></h2>
+                            </div>
+                            <p class="home-pinned-hint">Tap the star on a tool to pin it here.</p>
+                        `;
+                        if (allSectionLabel) allSectionLabel.style.display = 'none';
+                    }
+                } else {
+                    pinnedSection.style.display = 'none';
+                    pinnedSection.innerHTML = '';
+                    if (allSectionLabel) allSectionLabel.style.display = 'none';
+                }
+            }
 
             const filtered = ALL_TOOLS_CATALOG.filter(t => {
                 const matchesCategory = (filterCategory === 'fav')
@@ -4941,12 +5394,7 @@
                 return;
             }
 
-            grid.innerHTML = filtered.map(t => `
-                <button type="button" class="tool-card" data-tool="${t.id}" aria-label="Open ${escapeHtml(t.title)}">
-                    <span class="tool-icon" aria-hidden="true">${t.icon}</span>
-                    <span class="tool-name">${t.displayTitle || escapeHtml(t.title)}</span>
-                </button>
-            `).join('');
+            grid.innerHTML = filtered.map(t => buildToolCardMarkup(t, favIds)).join('');
         }
         window.renderHomeToolsGrid = renderHomeToolsGrid;
 
@@ -5400,6 +5848,17 @@
         // Global Back Navigation Handler (supports UI subpanels, modals, and panel history)
         function handleBackNavigation() {
             try {
+                // Close first-run onboarding guide if active
+                const onboardingEl = document.getElementById('onboardingOverlay');
+                if (onboardingEl && onboardingEl.classList.contains('active')) {
+                    if (typeof dismissOnboardingGuide === 'function') {
+                        dismissOnboardingGuide(true);
+                    } else {
+                        onboardingEl.classList.remove('active');
+                    }
+                    return true;
+                }
+
                 // If error boundary is open, reset view
                 const boundary = document.getElementById('render-error-boundary');
                 if (boundary && boundary.style.display !== 'none') {
@@ -5932,6 +6391,7 @@
             try {
                 localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(DEFAULT_FAVORITES));
                 renderPinnedQuickLaunch();
+                renderHomeToolsGrid(currentHomeCategory, document.getElementById('homeToolSearch')?.value || '');
                 if (typeof playSound === 'function') playSound('success');
                 if (typeof showGlobalToast === 'function') {
                     showGlobalToast('Pinned Favorite Tools Restored');
@@ -6134,6 +6594,25 @@
                 </div>
             </div>
             <button type="button" class="result-preview-download-btn" id="result-preview-download-btn">⬇ Download File</button>
+        </div>
+    </div>
+
+    <!-- FIRST-RUN ONBOARDING GUIDE OVERLAY -->
+    <div id="onboardingOverlay" class="onboarding-overlay" role="dialog" aria-modal="true" aria-labelledby="onboardingSlideTitle" aria-hidden="true">
+        <div class="onboarding-card">
+            <div class="onboarding-top-row">
+                <span class="onboarding-step" id="onboardingStepLabel">01 / 04</span>
+                <button type="button" class="onboarding-btn-skip" id="onboardingSkipBtn" onclick="dismissOnboardingGuide(true)" aria-label="Skip guide">Skip</button>
+            </div>
+            <div class="onboarding-visual" id="onboardingSlideIcon" aria-hidden="true"></div>
+            <div class="onboarding-copy">
+                <h2 class="onboarding-title" id="onboardingSlideTitle">Welcome to 1010 Tools</h2>
+                <p class="onboarding-body" id="onboardingSlideBody">30+ PDF, image and utility tools in one app.</p>
+            </div>
+            <div class="onboarding-footer">
+                <div class="onboarding-dots" id="onboardingDots" role="tablist" aria-label="Guide progress"></div>
+                <button type="button" class="onboarding-btn-primary" id="onboardingNextBtn" onclick="nextOnboardingSlide()" aria-label="Next slide">Next</button>
+            </div>
         </div>
     </div>
 

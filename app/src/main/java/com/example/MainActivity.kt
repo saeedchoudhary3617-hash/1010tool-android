@@ -585,6 +585,21 @@ class MainActivity : ComponentActivity() {
         }
 
         @JavascriptInterface
+        fun openExternalUrl(url: String) {
+            activity.runOnUiThread {
+                try {
+                    val uri = Uri.parse(url)
+                    val intent = Intent(Intent.ACTION_VIEW, uri).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    }
+                    activity.startActivity(intent)
+                } catch (_: Exception) {
+                    Toast.makeText(activity, "Unable to open browser", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+        @JavascriptInterface
         fun hapticFeedback(type: String) {
             activity.runOnUiThread {
                 try {
