@@ -3,11 +3,38 @@
  * 100% Client-side, Secure, Privacy-First
  */
 
-const APP_VERSION = '2.5.0';
-const UPDATE_API = 'https://cdtxhdhhenhibzgcycqf.supabase.co/rest/v1/releases?select=version,file_path&order=created_at.desc&limit=1';
-const UPDATE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNkdHhoZGhoZW5oaWJ6Z2N5Y3FmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ2NDI2MzcsImV4cCI6MjExMDIxODYzN30.MkS0biIE4JKzjYQ1aTqM5THLE_Ke_uNReVeDa-lPikE';
-const UPDATE_FILE_BASE = 'https://cdtxhdhhenhibzgcycqf.supabase.co/storage/v1/object/public/apks/';
+const APP_VERSION = '2.6.0';
+const SB_URL = 'https://cdtxhdhhenhibzgcycqf.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNkdHhoZGhoZW5oaWJ6Z2N5Y3FmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ2NDI2MzcsImV4cCI6MjExMDIxODYzN30.MkS0biIE4JKzjYQ1aTqM5THLE_Ke_uNReVeDa-lPikE';
+const SB_FILES = SB_URL + '/storage/v1/object/public/apks/';
 window.APP_VERSION = APP_VERSION;
+
+async function sbGet(path) {
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+        return null;
+    }
+    const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    const timeoutId = controller ? setTimeout(() => controller.abort(), 4000) : null;
+    try {
+        const response = await fetch(SB_URL + '/rest/v1/' + path, {
+            method: 'GET',
+            headers: {
+                apikey: SB_KEY,
+                Authorization: 'Bearer ' + SB_KEY
+            },
+            signal: controller ? controller.signal : undefined
+        });
+        if (!response || response.status !== 200) {
+            return null;
+        }
+        return await response.json();
+    } catch (_) {
+        return null;
+    } finally {
+        if (timeoutId) clearTimeout(timeoutId);
+    }
+}
+window.sbGet = sbGet;
 
 // ==========================================
 // 0. ERROR LOGGER & DIAGNOSTIC CONSOLE OVERLAY
@@ -5407,20 +5434,30 @@ function launchWithDroppedFile(toolId) {
 }
 
 // ==========================================
-// ENGAGEMENT: VERSION SYNC, ONBOARDING & UPDATE CHECKER
+// ENGAGEMENT & ADMIN CONTROLS (v2.6.0)
 // ==========================================
 
 const ONBOARDED_STORAGE_KEY = '1010_onboarded';
+const MIN_VERSION_STORAGE_KEY = '1010_min_version';
+const FORCE_MSG_STORAGE_KEY = '1010_force_msg';
+const DISMISSED_ANN_STORAGE_KEY = '1010_dismissed_ann';
 const UPDATE_LAST_CHECK_KEY = '1010_last_update_check';
-const UPDATE_DISMISSED_KEY = '1010_dismissed_update_version';
+const UPDATE_DISMISSED_KEY = '1010_dismissed_update';
 const UPDATE_CACHED_RELEASE_KEY = '1010_cached_release';
+const INSTALL_ID_STORAGE_KEY = '1010_install_id';
+const LAST_PING_STORAGE_KEY = '1010_last_ping';
+const USAGE_COUNT_ENABLED_KEY = '1010_usage_count_enabled';
+
 const UPDATE_CHECK_INTERVAL_MS = 6 * 60 * 60 * 1000;
+const USAGE_PING_INTERVAL_MS = 24 * 60 * 60 * 1000;
+const DEFAULT_FORCE_UPDATE_MSG = 'A new version is required. Please update the app.';
+const LATEST_RELEASE_QUERY = 'releases?select=version,file_path&order=pinned_latest.desc,created_at.desc&limit=1';
 
 function syncAppVersionUI() {
     try {
         const versionEl = document.getElementById('settingsAppVersion');
         if (versionEl) {
-            versionEl.innerText = 'v' + APP_VERSION;
+            versionEl.textContent = 'v' + APP_VERSION;
         }
     } catch (_) {}
 }
@@ -5431,24 +5468,28 @@ const ONBOARDING_SLIDES = [
         step: '01 / 04',
         title: 'Welcome to 1010 Tools',
         body: '30+ PDF, image and utility tools in one app.',
+        note: '',
         svg: '<svg viewBox="0 0 64 64" width="56" height="56" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="10" y="10" width="18" height="18" rx="4"/><rect x="36" y="10" width="18" height="18" rx="4"/><rect x="10" y="36" width="18" height="18" rx="4"/><path d="M45 36v18M36 45h18"/></svg>'
     },
     {
         step: '02 / 04',
         title: 'Local & Private',
         body: 'Your files are processed on your phone and never uploaded.',
+        note: 'Only an anonymous usage count is shared, and you can turn it off in Settings.',
         svg: '<svg viewBox="0 0 64 64" width="56" height="56" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M32 8L12 16v14c0 13.5 8.5 25.5 20 29 11.5-3.5 20-15.5 20-29V16L32 8z"/><path d="M23 32l6 6 12-13"/></svg>'
     },
     {
         step: '03 / 04',
         title: 'Find tools fast',
         body: 'Use search and the All / PDF / Images / Convert tabs.',
+        note: '',
         svg: '<svg viewBox="0 0 64 64" width="56" height="56" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="28" cy="28" r="16"/><path d="M40 40l14 14"/><path d="M21 28h14"/></svg>'
     },
     {
         step: '04 / 04',
         title: 'Pin your favourites',
         body: 'Tap the star on any tool to keep it at the top of Home.',
+        note: '',
         svg: '<svg viewBox="0 0 64 64" width="56" height="56" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="32 9 39.1 23.4 55 25.7 43.5 36.9 46.2 52.7 32 45.2 17.8 52.7 20.5 36.9 9 25.7 24.9 23.4 32 9"/></svg>'
     }
 ];
@@ -5461,17 +5502,27 @@ function renderOnboardingSlide() {
     const iconEl = document.getElementById('onboardingSlideIcon');
     const titleEl = document.getElementById('onboardingSlideTitle');
     const bodyEl = document.getElementById('onboardingSlideBody');
+    const noteEl = document.getElementById('onboardingSlideNote');
     const nextBtn = document.getElementById('onboardingNextBtn');
     const dotsWrap = document.getElementById('onboardingDots');
 
-    if (stepEl) stepEl.innerText = slide.step;
+    if (stepEl) stepEl.textContent = slide.step;
     if (iconEl) iconEl.innerHTML = slide.svg;
-    if (titleEl) titleEl.innerText = slide.title;
-    if (bodyEl) bodyEl.innerText = slide.body;
+    if (titleEl) titleEl.textContent = slide.title;
+    if (bodyEl) bodyEl.textContent = slide.body;
+    if (noteEl) {
+        if (slide.note) {
+            noteEl.textContent = slide.note;
+            noteEl.style.display = 'block';
+        } else {
+            noteEl.textContent = '';
+            noteEl.style.display = 'none';
+        }
+    }
 
     const isLast = onboardingSlideIndex >= ONBOARDING_SLIDES.length - 1;
     if (nextBtn) {
-        nextBtn.innerText = isLast ? 'Get started' : 'Next';
+        nextBtn.textContent = isLast ? 'Get started' : 'Next';
         nextBtn.setAttribute('aria-label', isLast ? 'Get started' : 'Next slide');
     }
 
@@ -5489,6 +5540,8 @@ function renderOnboardingSlide() {
 }
 
 function showOnboardingGuide(fromSettings = false) {
+    const forceOverlay = document.getElementById('forceUpdateOverlay');
+    if (forceOverlay && forceOverlay.classList.contains('active')) return;
     const overlay = document.getElementById('onboardingOverlay');
     if (!overlay) return;
     onboardingSlideIndex = 0;
@@ -5550,6 +5603,8 @@ function maybeShowFirstRunGuide() {
 }
 
 let pendingReleaseInfo = null;
+let sessionAnnouncement = null;
+let forceUpdateLocked = false;
 
 function normalizeVersionString(ver) {
     return String(ver || '').trim().replace(/^v/i, '');
@@ -5574,6 +5629,289 @@ function compareDottedVersions(a, b) {
     return 0;
 }
 
+function parseJsonSettingValue(raw) {
+    if (raw === null || raw === undefined) return '';
+    if (typeof raw === 'string') {
+        const trimmed = raw.trim();
+        if (!trimmed) return '';
+        try {
+            const parsed = JSON.parse(trimmed);
+            return parsed === null || parsed === undefined ? '' : String(parsed);
+        } catch (_) {
+            return trimmed;
+        }
+    }
+    return String(raw);
+}
+
+function openExternalReleaseUrl(url) {
+    if (!url) return;
+    try {
+        const capBrowser = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Browser;
+        if (capBrowser && typeof capBrowser.open === 'function') {
+            capBrowser.open({ url: url }).catch(() => {
+                if (window.AndroidBridge && typeof window.AndroidBridge.openExternalUrl === 'function') {
+                    window.AndroidBridge.openExternalUrl(url);
+                } else {
+                    window.open(url, '_blank', 'noopener,noreferrer');
+                }
+            });
+            return;
+        }
+    } catch (_) {}
+    try {
+        if (window.AndroidBridge && typeof window.AndroidBridge.openExternalUrl === 'function') {
+            window.AndroidBridge.openExternalUrl(url);
+            return;
+        }
+    } catch (_) {}
+    try {
+        window.open(url, '_blank', 'noopener,noreferrer');
+    } catch (_) {}
+}
+
+async function fetchLatestRelease() {
+    const rows = await sbGet(LATEST_RELEASE_QUERY);
+    if (!Array.isArray(rows) || rows.length === 0) return null;
+    const latestRow = rows[0];
+    if (!latestRow || !latestRow.version || !latestRow.file_path) return null;
+    return {
+        version: normalizeVersionString(latestRow.version),
+        file_path: String(latestRow.file_path)
+    };
+}
+
+// 1) Force update
+function showForceUpdateOverlay(minVersion, messageText) {
+    const overlay = document.getElementById('forceUpdateOverlay');
+    const msgEl = document.getElementById('forceUpdateMessage');
+    const verEl = document.getElementById('forceUpdateVersions');
+    if (!overlay) return;
+
+    forceUpdateLocked = true;
+    const cleanMin = normalizeVersionString(minVersion);
+    const displayMsg = (messageText && String(messageText).trim()) ? String(messageText).trim() : DEFAULT_FORCE_UPDATE_MSG;
+
+    if (msgEl) msgEl.textContent = displayMsg;
+    if (verEl) verEl.textContent = `Installed: v${APP_VERSION}  \u00b7  Required: v${cleanMin}`;
+
+    const onboardingEl = document.getElementById('onboardingOverlay');
+    if (onboardingEl && onboardingEl.classList.contains('active')) {
+        onboardingEl.classList.remove('active');
+        onboardingEl.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('onboarding-open');
+    }
+
+    const containerEl = document.querySelector('.container');
+    const bottomNavEl = document.getElementById('lockedBottomNav');
+    if (containerEl) {
+        containerEl.setAttribute('aria-hidden', 'true');
+        try { containerEl.inert = true; } catch (_) {}
+    }
+    if (bottomNavEl) {
+        bottomNavEl.setAttribute('aria-hidden', 'true');
+        try { bottomNavEl.inert = true; } catch (_) {}
+    }
+
+    document.body.classList.add('force-update-locked');
+    overlay.classList.add('active');
+    overlay.setAttribute('aria-hidden', 'false');
+}
+
+function hideForceUpdateOverlay() {
+    forceUpdateLocked = false;
+    const overlay = document.getElementById('forceUpdateOverlay');
+    if (overlay) {
+        overlay.classList.remove('active');
+        overlay.setAttribute('aria-hidden', 'true');
+    }
+    document.body.classList.remove('force-update-locked');
+    const containerEl = document.querySelector('.container');
+    const bottomNavEl = document.getElementById('lockedBottomNav');
+    if (containerEl) {
+        containerEl.removeAttribute('aria-hidden');
+        try { containerEl.inert = false; } catch (_) {}
+    }
+    if (bottomNavEl) {
+        bottomNavEl.removeAttribute('aria-hidden');
+        try { bottomNavEl.inert = false; } catch (_) {}
+    }
+}
+
+function evaluateForceUpdate(minVersion, forceMessage) {
+    const cleanMin = normalizeVersionString(minVersion);
+    if (!cleanMin || cleanMin === '0.0.0') {
+        hideForceUpdateOverlay();
+        return false;
+    }
+    if (compareDottedVersions(APP_VERSION, cleanMin) < 0) {
+        showForceUpdateOverlay(cleanMin, forceMessage);
+        return true;
+    }
+    hideForceUpdateOverlay();
+    return false;
+}
+
+async function checkForceUpdate() {
+    try {
+        let savedMin = '';
+        let savedMsg = '';
+        try {
+            savedMin = localStorage.getItem(MIN_VERSION_STORAGE_KEY) || '';
+            savedMsg = localStorage.getItem(FORCE_MSG_STORAGE_KEY) || '';
+        } catch (_) {}
+
+        const rows = await sbGet('app_settings?select=key,value&key=in.(min_version,force_update_message)');
+        if (Array.isArray(rows)) {
+            let fetchedMin = '';
+            let fetchedMsg = '';
+            let hasMinKey = false;
+            let hasMsgKey = false;
+            for (const row of rows) {
+                if (!row || !row.key) continue;
+                if (row.key === 'min_version') {
+                    hasMinKey = true;
+                    fetchedMin = normalizeVersionString(parseJsonSettingValue(row.value));
+                } else if (row.key === 'force_update_message') {
+                    hasMsgKey = true;
+                    fetchedMsg = parseJsonSettingValue(row.value).trim();
+                }
+            }
+            const effectiveMin = hasMinKey ? fetchedMin : '0.0.0';
+            const effectiveMsg = hasMsgKey ? fetchedMsg : '';
+            try {
+                localStorage.setItem(MIN_VERSION_STORAGE_KEY, effectiveMin);
+                localStorage.setItem(FORCE_MSG_STORAGE_KEY, effectiveMsg);
+            } catch (_) {}
+            evaluateForceUpdate(effectiveMin, effectiveMsg);
+            return;
+        }
+
+        // Fetch failed (offline/timeout): evaluate using previously saved value if known
+        if (savedMin) {
+            evaluateForceUpdate(savedMin, savedMsg);
+        }
+    } catch (_) {}
+}
+
+async function triggerForceUpdateDownload() {
+    const btn = document.getElementById('forceUpdateActionBtn');
+    if (btn && btn.disabled) return;
+    if (typeof triggerHaptic === 'function') triggerHaptic('click');
+    if (btn) {
+        btn.disabled = true;
+        btn.textContent = 'Checking...';
+    }
+    try {
+        const release = await fetchLatestRelease();
+        if (release && release.file_path) {
+            pendingReleaseInfo = release;
+            const apkUrl = SB_FILES + encodeURIComponent(release.file_path);
+            openExternalReleaseUrl(apkUrl);
+        } else if (pendingReleaseInfo && pendingReleaseInfo.file_path) {
+            const apkUrl = SB_FILES + encodeURIComponent(pendingReleaseInfo.file_path);
+            openExternalReleaseUrl(apkUrl);
+        } else {
+            try {
+                const cachedRaw = localStorage.getItem(UPDATE_CACHED_RELEASE_KEY);
+                if (cachedRaw) {
+                    const cached = JSON.parse(cachedRaw);
+                    if (cached && cached.file_path) {
+                        openExternalReleaseUrl(SB_FILES + encodeURIComponent(cached.file_path));
+                    }
+                }
+            } catch (_) {}
+        }
+    } catch (_) {
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.textContent = 'Update now';
+        }
+    }
+}
+window.triggerForceUpdateDownload = triggerForceUpdateDownload;
+
+// 2) Announcement banner (session-only memory + dismissed IDs in localStorage)
+function getDismissedAnnouncementIds() {
+    try {
+        const raw = localStorage.getItem(DISMISSED_ANN_STORAGE_KEY);
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) return parsed.map(String);
+        return [String(parsed)];
+    } catch (_) {
+        try {
+            const raw = localStorage.getItem(DISMISSED_ANN_STORAGE_KEY);
+            return raw ? [String(raw)] : [];
+        } catch (__) {
+            return [];
+        }
+    }
+}
+
+function renderAnnouncementBanner() {
+    try {
+        const banner = document.getElementById('homeAnnouncementBanner');
+        const textEl = document.getElementById('homeAnnouncementText');
+        if (!banner || !textEl) return;
+
+        if (!sessionAnnouncement || !sessionAnnouncement.id || !sessionAnnouncement.message) {
+            banner.style.display = 'none';
+            return;
+        }
+
+        const dismissedIds = getDismissedAnnouncementIds();
+        if (dismissedIds.includes(String(sessionAnnouncement.id))) {
+            banner.style.display = 'none';
+            return;
+        }
+
+        textEl.textContent = String(sessionAnnouncement.message);
+        banner.style.display = 'flex';
+    } catch (_) {}
+}
+
+function dismissAnnouncementBanner() {
+    try {
+        if (sessionAnnouncement && sessionAnnouncement.id !== undefined && sessionAnnouncement.id !== null) {
+            const idStr = String(sessionAnnouncement.id);
+            const dismissedIds = getDismissedAnnouncementIds();
+            if (!dismissedIds.includes(idStr)) {
+                dismissedIds.push(idStr);
+                localStorage.setItem(DISMISSED_ANN_STORAGE_KEY, JSON.stringify(dismissedIds));
+            }
+        }
+        const banner = document.getElementById('homeAnnouncementBanner');
+        if (banner) banner.style.display = 'none';
+        if (typeof triggerHaptic === 'function') triggerHaptic('click');
+    } catch (_) {}
+}
+window.dismissAnnouncementBanner = dismissAnnouncementBanner;
+
+async function checkAnnouncement() {
+    try {
+        const rows = await sbGet('announcements?select=id,message&order=created_at.desc&limit=1');
+        if (!Array.isArray(rows) || rows.length === 0) {
+            sessionAnnouncement = null;
+            renderAnnouncementBanner();
+            return;
+        }
+        const item = rows[0];
+        if (!item || item.id === undefined || item.id === null || !item.message) {
+            sessionAnnouncement = null;
+            renderAnnouncementBanner();
+            return;
+        }
+        sessionAnnouncement = {
+            id: String(item.id),
+            message: String(item.message)
+        };
+        renderAnnouncementBanner();
+    } catch (_) {}
+}
+
+// 3) Optional Update Banner
 function renderUpdateBanner(release) {
     try {
         const banner = document.getElementById('homeUpdateBanner');
@@ -5601,7 +5939,7 @@ function renderUpdateBanner(release) {
             version: latest,
             file_path: String(release.file_path || '')
         };
-        textEl.innerText = `Update available: v${latest}`;
+        textEl.textContent = `Update available: v${latest}`;
         banner.style.display = 'flex';
     } catch (_) {}
 }
@@ -5609,13 +5947,9 @@ function renderUpdateBanner(release) {
 function openUpdateDownload() {
     try {
         if (!pendingReleaseInfo || !pendingReleaseInfo.file_path) return;
-        const apkUrl = UPDATE_FILE_BASE + encodeURIComponent(pendingReleaseInfo.file_path);
+        const apkUrl = SB_FILES + encodeURIComponent(pendingReleaseInfo.file_path);
         if (typeof triggerHaptic === 'function') triggerHaptic('click');
-        if (window.AndroidBridge && typeof window.AndroidBridge.openExternalUrl === 'function') {
-            window.AndroidBridge.openExternalUrl(apkUrl);
-        } else {
-            window.open(apkUrl, '_blank', 'noopener,noreferrer');
-        }
+        openExternalReleaseUrl(apkUrl);
     } catch (_) {}
 }
 window.openUpdateDownload = openUpdateDownload;
@@ -5660,38 +5994,120 @@ async function checkForAppUpdate() {
             localStorage.setItem(UPDATE_LAST_CHECK_KEY, String(now));
         } catch (_) {}
 
-        const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
-        const timeoutId = controller ? setTimeout(() => controller.abort(), 4000) : null;
+        const release = await fetchLatestRelease();
+        if (!release) return;
 
         try {
-            const response = await fetch(UPDATE_API, {
-                method: 'GET',
-                headers: {
-                    apikey: UPDATE_KEY,
-                    Authorization: 'Bearer ' + UPDATE_KEY
-                },
-                signal: controller ? controller.signal : undefined
-            });
-            if (!response.ok) return;
-            const rows = await response.json();
-            if (!Array.isArray(rows) || rows.length === 0) return;
-            const latestRow = rows[0];
-            if (!latestRow || !latestRow.version || !latestRow.file_path) return;
-            const release = {
-                version: normalizeVersionString(latestRow.version),
-                file_path: String(latestRow.file_path)
-            };
-            try {
-                localStorage.setItem(UPDATE_CACHED_RELEASE_KEY, JSON.stringify(release));
-            } catch (_) {}
-            renderUpdateBanner(release);
-        } finally {
-            if (timeoutId) clearTimeout(timeoutId);
-        }
+            localStorage.setItem(UPDATE_CACHED_RELEASE_KEY, JSON.stringify(release));
+        } catch (_) {}
+        renderUpdateBanner(release);
     } catch (_) {
         // Silent failure when offline or unreachable
     }
 }
+
+// 4) Anonymous usage count
+function generateInstallUUID() {
+    try {
+        if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+            return crypto.randomUUID();
+        }
+    } catch (_) {}
+    const hex = [];
+    for (let i = 0; i < 32; i++) {
+        hex.push(Math.floor(Math.random() * 16).toString(16));
+    }
+    hex[12] = '4';
+    hex[16] = ((parseInt(hex[16], 16) & 0x3) | 0x8).toString(16);
+    const s = hex.join('');
+    return `${s.slice(0, 8)}-${s.slice(8, 12)}-${s.slice(12, 16)}-${s.slice(16, 20)}-${s.slice(20, 32)}`;
+}
+
+function isUsageCountEnabled() {
+    try {
+        return localStorage.getItem(USAGE_COUNT_ENABLED_KEY) !== 'false';
+    } catch (_) {
+        return true;
+    }
+}
+window.isUsageCountEnabled = isUsageCountEnabled;
+
+function getOrCreateInstallId() {
+    try {
+        let id = localStorage.getItem(INSTALL_ID_STORAGE_KEY);
+        if (!id) {
+            id = generateInstallUUID();
+            localStorage.setItem(INSTALL_ID_STORAGE_KEY, id);
+        }
+        return id;
+    } catch (_) {
+        return generateInstallUUID();
+    }
+}
+
+async function pingAnonymousInstall() {
+    try {
+        if (!isUsageCountEnabled()) return;
+        if (typeof navigator !== 'undefined' && navigator.onLine === false) return;
+
+        const now = Date.now();
+        let lastPing = 0;
+        try {
+            lastPing = parseInt(localStorage.getItem(LAST_PING_STORAGE_KEY) || '0', 10) || 0;
+        } catch (_) {}
+
+        if (lastPing && (now - lastPing) < USAGE_PING_INTERVAL_MS) {
+            return;
+        }
+
+        const installId = getOrCreateInstallId();
+        try {
+            localStorage.setItem(LAST_PING_STORAGE_KEY, String(now));
+        } catch (_) {}
+
+        const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+        const timeoutId = controller ? setTimeout(() => controller.abort(), 4000) : null;
+        try {
+            await fetch(SB_URL + '/rest/v1/rpc/register_install', {
+                method: 'POST',
+                headers: {
+                    apikey: SB_KEY,
+                    Authorization: 'Bearer ' + SB_KEY,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    p_id: installId,
+                    p_version: APP_VERSION
+                }),
+                signal: controller ? controller.signal : undefined
+            });
+        } finally {
+            if (timeoutId) clearTimeout(timeoutId);
+        }
+    } catch (_) {
+        // Ignore all errors silently
+    }
+}
+
+function toggleUsageCountSetting(enabled) {
+    try {
+        const isOn = Boolean(enabled);
+        localStorage.setItem(USAGE_COUNT_ENABLED_KEY, isOn ? 'true' : 'false');
+        if (!isOn) {
+            localStorage.removeItem(INSTALL_ID_STORAGE_KEY);
+        } else {
+            pingAnonymousInstall();
+        }
+        if (typeof triggerHaptic === 'function') triggerHaptic('click');
+        if (typeof playSound === 'function') {
+            try { playSound('click'); } catch (_) {}
+        }
+        if (typeof showGlobalToast === 'function') {
+            showGlobalToast(isOn ? 'Anonymous usage count enabled' : 'Anonymous usage count disabled');
+        }
+    } catch (_) {}
+}
+window.toggleUsageCountSetting = toggleUsageCountSetting;
 
 // Initialize on DOM Ready or immediately if loaded
 function initApp() {
@@ -5733,7 +6149,10 @@ function initApp() {
         }
         updateDebugDependencies();
         maybeShowFirstRunGuide();
+        checkForceUpdate();
+        checkAnnouncement();
         checkForAppUpdate();
+        pingAnonymousInstall();
     } catch (e) {
         errorLogger.record({
             type: 'INITIALIZATION_ERROR',

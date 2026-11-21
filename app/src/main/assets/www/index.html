@@ -3455,8 +3455,185 @@
           touch-action: manipulation;
           box-shadow: var(--shadow);
         }
+        .onboarding-note {
+          font-family: var(--font-sans);
+          font-size: 0.84rem;
+          line-height: 1.45;
+          color: var(--text-muted);
+          margin-top: 2px;
+          overflow-wrap: anywhere;
+        }
         @media (hover: hover) {
           .onboarding-btn-primary:hover {
+            background: var(--accent-hover);
+            border-color: var(--accent-hover);
+          }
+        }
+
+        /* Announcement Banner (top of Home, above Update Banner) */
+        .home-announcement-banner {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 10px;
+          padding: 10px 8px 10px 14px;
+          margin-bottom: 12px;
+          background: var(--surface);
+          border: 1px solid var(--border);
+          border-left: 4px solid var(--accent);
+          border-radius: 10px;
+          box-shadow: var(--shadow);
+        }
+        .home-announcement-body {
+          display: flex;
+          align-items: flex-start;
+          gap: 10px;
+          min-width: 0;
+          flex: 1 1 auto;
+        }
+        .home-announcement-icon {
+          color: var(--accent);
+          flex-shrink: 0;
+          margin-top: 2px;
+          display: inline-flex;
+        }
+        .home-announcement-text {
+          font-family: var(--font-sans);
+          font-size: 0.88rem;
+          font-weight: 500;
+          line-height: 1.4;
+          color: var(--text);
+          overflow-wrap: anywhere;
+        }
+        .home-announcement-close {
+          width: 44px;
+          height: 44px;
+          min-width: 44px;
+          min-height: 44px;
+          flex-shrink: 0;
+          border-radius: 8px;
+          border: 1px solid transparent;
+          background: transparent;
+          color: var(--text-light);
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          touch-action: manipulation;
+          font-family: var(--font-mono);
+          font-size: 1.05rem;
+          font-weight: 700;
+          transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+        }
+        @media (hover: hover) {
+          .home-announcement-close:hover {
+            background: var(--accent-light);
+            color: var(--accent);
+            border-color: var(--border);
+          }
+        }
+
+        /* Force Update Full-Screen Blocking Overlay */
+        body.force-update-locked {
+          overflow: hidden;
+          touch-action: none;
+        }
+        body.force-update-locked .container,
+        body.force-update-locked .locked-bottom-nav {
+          pointer-events: none;
+          user-select: none;
+        }
+        .force-update-overlay {
+          position: fixed;
+          inset: 0;
+          z-index: 10500;
+          background: var(--bg);
+          color: var(--text);
+          display: none;
+          align-items: center;
+          justify-content: center;
+          padding: 20px;
+          transition: background-color 0.35s ease, color 0.35s ease;
+        }
+        .force-update-overlay.active {
+          display: flex;
+        }
+        .force-update-card {
+          width: 100%;
+          max-width: 420px;
+          background: var(--surface);
+          border: 1px solid var(--border);
+          border-radius: 16px;
+          box-shadow: var(--shadow-md);
+          padding: 26px 22px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+          gap: 14px;
+        }
+        .force-update-badge {
+          font-family: var(--font-mono);
+          font-size: 0.72rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+          padding: 4px 10px;
+          border-radius: 4px;
+          background: var(--accent-light);
+          color: var(--accent);
+          border: 1px solid var(--accent);
+        }
+        .force-update-title {
+          font-family: var(--font-serif);
+          font-size: 2rem;
+          font-weight: 400;
+          line-height: 1.15;
+          color: var(--text);
+          overflow-wrap: anywhere;
+        }
+        .force-update-message {
+          font-family: var(--font-sans);
+          font-size: 0.96rem;
+          line-height: 1.5;
+          color: var(--text-light);
+          overflow-wrap: anywhere;
+        }
+        .force-update-versions {
+          font-family: var(--font-mono);
+          font-size: 0.8rem;
+          font-weight: 600;
+          color: var(--text-muted);
+          background: var(--bg);
+          border: 1px solid var(--border);
+          border-radius: 6px;
+          padding: 8px 12px;
+          width: 100%;
+          overflow-wrap: anywhere;
+        }
+        .force-update-btn {
+          width: 100%;
+          min-height: 48px;
+          padding: 12px 20px;
+          margin-top: 6px;
+          border-radius: 8px;
+          border: 1px solid var(--accent);
+          background: var(--accent);
+          color: #FAF8F5;
+          font-family: var(--font-sans);
+          font-size: 0.98rem;
+          font-weight: 600;
+          cursor: pointer;
+          touch-action: manipulation;
+          box-shadow: var(--shadow);
+          transition: background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+        }
+        .force-update-btn:disabled {
+          opacity: 0.7;
+          cursor: wait;
+        }
+        @media (hover: hover) {
+          .force-update-btn:hover {
             background: var(--accent-hover);
             border-color: var(--accent-hover);
           }
@@ -3464,6 +3641,8 @@
         @media (pointer: coarse) {
           .btn-fav-star:active,
           .home-update-btn:active,
+          .home-announcement-close:active,
+          .force-update-btn:active,
           .onboarding-btn-skip:active,
           .onboarding-dot-btn:active,
           .onboarding-btn-primary:active {
@@ -3622,11 +3801,22 @@
 
         <!-- HOME DASHBOARD PANEL -->
         <div id="home" class="tool-panel active">
+            <!-- Dismissible Announcement Banner (top of Home, above Update Banner) -->
+            <div id="homeAnnouncementBanner" class="home-announcement-banner" role="status" aria-live="polite" aria-label="Announcement" style="display:none;">
+                <div class="home-announcement-body">
+                    <span class="home-announcement-icon" aria-hidden="true">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
+                    </span>
+                    <span class="home-announcement-text" id="homeAnnouncementText"></span>
+                </div>
+                <button type="button" class="home-announcement-close" id="homeAnnouncementCloseBtn" onclick="dismissAnnouncementBanner()" aria-label="Dismiss announcement">✕</button>
+            </div>
+
             <!-- Dismissible Update Available Banner -->
             <div id="homeUpdateBanner" class="home-update-banner" role="region" aria-label="App update available" style="display:none;">
                 <div class="home-update-info">
                     <span class="home-update-dot" aria-hidden="true"></span>
-                    <span class="home-update-text" id="homeUpdateBannerText">Update available</span>
+                    <span class="home-update-text" id="homeUpdateBannerText"></span>
                 </div>
                 <div class="home-update-actions">
                     <button type="button" class="home-update-btn home-update-btn-primary" onclick="openUpdateDownload()" aria-label="Download latest update">Update</button>
@@ -4825,11 +5015,22 @@
                     <div class="settings-row">
                         <div class="settings-info">
                             <div class="settings-label">Processing Engine</div>
-                            <div class="settings-desc">Files and images never leave your device; zero server uploads</div>
-                            <div class="settings-desc" style="margin-top: 4px;">Checks for updates by asking only for the latest version number. Your files never leave your phone.</div>
+                            <div class="settings-desc">The app only contacts the server to check for updates and, if enabled, to send an anonymous usage count. Your files never leave your phone.</div>
                         </div>
                         <div class="settings-control">
                             <span class="settings-pill-badge">100% Client-Side</span>
+                        </div>
+                    </div>
+                    <div class="settings-row">
+                        <div class="settings-info">
+                            <div class="settings-label">Anonymous usage count</div>
+                            <div class="settings-desc">Sends only a random ID and the app version once a day, so I can count how many phones use the app. No files, names or numbers.</div>
+                        </div>
+                        <div class="settings-control">
+                            <label class="settings-switch">
+                                <input type="checkbox" id="settingsUsageCountToggle" onchange="toggleUsageCountSetting(this.checked)" checked aria-label="Toggle Anonymous usage count" />
+                                <span class="settings-slider"></span>
+                            </label>
                         </div>
                     </div>
                     <div class="settings-row">
@@ -4867,7 +5068,7 @@
                             <div class="settings-desc">High-speed offline-first PDF, Image, Converter and Developer utilities</div>
                         </div>
                         <div class="settings-control">
-                            <span id="settingsAppVersion" style="font-size: 0.82rem; font-weight: 600; font-family: 'JetBrains Mono', monospace; color: var(--text-muted);">v2.5.0</span>
+                            <span id="settingsAppVersion" style="font-size: 0.82rem; font-weight: 600; font-family: 'JetBrains Mono', monospace; color: var(--text-muted);"></span>
                         </div>
                     </div>
                 </div>
@@ -5848,6 +6049,12 @@
         // Global Back Navigation Handler (supports UI subpanels, modals, and panel history)
         function handleBackNavigation() {
             try {
+                // Never allow dismissing mandatory Force Update overlay
+                const forceUpdateEl = document.getElementById('forceUpdateOverlay');
+                if (forceUpdateEl && forceUpdateEl.classList.contains('active')) {
+                    return true;
+                }
+
                 // Close first-run onboarding guide if active
                 const onboardingEl = document.getElementById('onboardingOverlay');
                 if (onboardingEl && onboardingEl.classList.contains('active')) {
@@ -6341,6 +6548,16 @@
                     const savedHaptic = localStorage.getItem('haptic_enabled');
                     hapticToggle.checked = savedHaptic !== 'false';
                 }
+
+                const usageToggle = document.getElementById('settingsUsageCountToggle');
+                if (usageToggle) {
+                    const savedUsage = localStorage.getItem('1010_usage_count_enabled');
+                    usageToggle.checked = savedUsage !== 'false';
+                }
+
+                if (typeof syncAppVersionUI === 'function') {
+                    syncAppVersionUI();
+                }
             } catch (e) {
                 console.warn('syncSettingsUIState note:', e);
             }
@@ -6608,11 +6825,23 @@
             <div class="onboarding-copy">
                 <h2 class="onboarding-title" id="onboardingSlideTitle">Welcome to 1010 Tools</h2>
                 <p class="onboarding-body" id="onboardingSlideBody">30+ PDF, image and utility tools in one app.</p>
+                <p class="onboarding-note" id="onboardingSlideNote" style="display:none;"></p>
             </div>
             <div class="onboarding-footer">
                 <div class="onboarding-dots" id="onboardingDots" role="tablist" aria-label="Guide progress"></div>
                 <button type="button" class="onboarding-btn-primary" id="onboardingNextBtn" onclick="nextOnboardingSlide()" aria-label="Next slide">Next</button>
             </div>
+        </div>
+    </div>
+
+    <!-- FORCE UPDATE BLOCKING OVERLAY (non-dismissible) -->
+    <div id="forceUpdateOverlay" class="force-update-overlay" role="alertdialog" aria-modal="true" aria-labelledby="forceUpdateHeading" aria-describedby="forceUpdateMessage" aria-hidden="true">
+        <div class="force-update-card">
+            <span class="force-update-badge">Required Update</span>
+            <h2 class="force-update-title" id="forceUpdateHeading">Update required</h2>
+            <p class="force-update-message" id="forceUpdateMessage">A new version is required. Please update the app.</p>
+            <div class="force-update-versions" id="forceUpdateVersions"></div>
+            <button type="button" class="force-update-btn" id="forceUpdateActionBtn" onclick="triggerForceUpdateDownload()" aria-label="Update now">Update now</button>
         </div>
     </div>
 
