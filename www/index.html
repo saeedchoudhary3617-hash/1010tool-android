@@ -3645,10 +3645,782 @@
           .force-update-btn:active,
           .onboarding-btn-skip:active,
           .onboarding-dot-btn:active,
-          .onboarding-btn-primary:active {
+          .onboarding-btn-primary:active,
+          .ps-btn:active,
+          .ps-chip:active,
+          .ps-stepper-btn:active,
+          .ps-edit-tab:active,
+          .ps-export-tab:active,
+          .ps-swatch-btn:active,
+          .ps-size-preset-item:active,
+          .ps-nudge-btn:active {
             transform: none !important;
             box-shadow: none !important;
             opacity: 0.85;
+          }
+        }
+
+        /* ===== Passport Photo Studio (v2.7.0) ===== */
+        #passport, #passport * {
+          box-sizing: border-box;
+          min-width: 0;
+        }
+        .ps-studio {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          width: 100%;
+          max-width: 100%;
+          overflow-x: clip;
+        }
+        .ps-header-bar {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 8px;
+          padding-bottom: 8px;
+          border-bottom: 1px solid var(--border);
+        }
+        .ps-header-title {
+          font-family: var(--font-serif);
+          font-size: 1.55rem;
+          font-weight: 400;
+          color: var(--text);
+          margin: 0;
+          line-height: 1.15;
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+        }
+        .ps-stepper {
+          display: flex;
+          align-items: stretch;
+          gap: 6px;
+          width: 100%;
+          flex-wrap: wrap;
+        }
+        .ps-stepper-btn {
+          flex: 1 1 92px;
+          min-height: 44px;
+          padding: 8px 10px;
+          border-radius: var(--radius);
+          border: 1px solid var(--border);
+          background: var(--surface);
+          color: var(--text-light);
+          font-family: var(--font-mono);
+          font-size: 0.76rem;
+          font-weight: 600;
+          cursor: pointer;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+          text-align: center;
+          touch-action: manipulation;
+          white-space: normal;
+          line-height: 1.2;
+        }
+        .ps-stepper-btn.active {
+          background: var(--accent);
+          border-color: var(--accent);
+          color: #FAF8F5;
+          box-shadow: var(--shadow);
+        }
+        .ps-stepper-btn.done {
+          border-color: var(--text);
+          color: var(--text);
+        }
+        .ps-stepper-btn:disabled {
+          opacity: 0.45;
+          cursor: not-allowed;
+        }
+        .ps-step-num {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          border: 1px solid currentColor;
+          font-size: 0.7rem;
+          flex-shrink: 0;
+        }
+
+        /* Step 1: Upload */
+        .ps-upload-card {
+          background: var(--surface);
+          border: 1.5px dashed var(--border);
+          border-radius: var(--radius-lg);
+          padding: 22px 16px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+          gap: 12px;
+        }
+        .ps-upload-title {
+          font-family: var(--font-serif);
+          font-size: 1.45rem;
+          font-weight: 400;
+          color: var(--text);
+          margin: 0;
+        }
+        .ps-upload-sub {
+          font-size: 0.88rem;
+          color: var(--text-light);
+          max-width: 420px;
+          line-height: 1.45;
+        }
+        .ps-upload-actions {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 10px;
+          justify-content: center;
+          width: 100%;
+        }
+        .ps-file-trigger {
+          position: relative;
+          overflow: hidden;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          min-height: 48px;
+          padding: 10px 16px;
+          flex: 1 1 140px;
+          border-radius: var(--radius);
+          border: 1px solid var(--accent);
+          background: var(--accent);
+          color: #FAF8F5;
+          font-family: var(--font-sans);
+          font-size: 0.92rem;
+          font-weight: 600;
+          cursor: pointer;
+          box-shadow: var(--shadow);
+          touch-action: manipulation;
+        }
+        .ps-file-trigger.ps-secondary {
+          background: var(--surface);
+          color: var(--text);
+          border: 1px solid var(--text);
+        }
+        .ps-file-trigger input[type="file"] {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          opacity: 0;
+          cursor: pointer;
+        }
+        .ps-privacy-pill {
+          font-family: var(--font-mono);
+          font-size: 0.72rem;
+          color: var(--text-muted);
+          background: var(--bg);
+          border: 1px solid var(--border);
+          border-radius: 4px;
+          padding: 4px 10px;
+        }
+
+        /* Step 2: Sticky Crop Viewport + Compact Tab Bar */
+        .ps-sticky-viewport {
+          position: sticky;
+          top: 4px;
+          z-index: 15;
+          background: var(--bg);
+          padding-bottom: 8px;
+          border-bottom: 1px solid var(--border);
+        }
+        .ps-canvas-wrap {
+          position: relative;
+          width: 100%;
+          border-radius: var(--radius);
+          overflow: hidden;
+          border: 1.5px solid var(--text);
+          background: #252320;
+          box-shadow: var(--shadow);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        #ps-crop-canvas {
+          display: block;
+          touch-action: none;
+          user-select: none;
+          -webkit-user-select: none;
+          cursor: grab;
+        }
+        #ps-crop-canvas:active {
+          cursor: grabbing;
+        }
+        .ps-brush-canvas-badge {
+          position: absolute;
+          top: 8px;
+          left: 8px;
+          right: 8px;
+          display: none;
+          align-items: center;
+          justify-content: center;
+          text-align: center;
+          padding: 5px 10px;
+          border-radius: 4px;
+          background: rgba(20, 20, 19, 0.85);
+          color: #FAF8F5;
+          border: 1px solid var(--accent);
+          font-family: var(--font-mono);
+          font-size: 0.7rem;
+          pointer-events: none;
+        }
+        .ps-canvas-meta-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 6px;
+          margin-top: 8px;
+        }
+        .ps-size-chip-btn {
+          min-height: 44px;
+          padding: 6px 10px;
+          border-radius: var(--radius-sm);
+          border: 1px solid var(--border);
+          background: var(--surface);
+          color: var(--text);
+          font-family: var(--font-mono);
+          font-size: 0.74rem;
+          font-weight: 600;
+          cursor: pointer;
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          touch-action: manipulation;
+          flex: 1 1 150px;
+          justify-content: center;
+          text-align: center;
+        }
+        .ps-edit-tabs {
+          display: flex;
+          gap: 6px;
+          margin-top: 8px;
+          flex-wrap: wrap;
+        }
+        .ps-edit-tab, .ps-export-tab {
+          flex: 1 1 70px;
+          min-height: 44px;
+          padding: 8px 6px;
+          border-radius: var(--radius-sm);
+          border: 1px solid var(--border);
+          background: var(--surface);
+          color: var(--text);
+          font-family: var(--font-mono);
+          font-size: 0.76rem;
+          font-weight: 600;
+          cursor: pointer;
+          touch-action: manipulation;
+          text-align: center;
+          white-space: normal;
+          line-height: 1.2;
+        }
+        .ps-edit-tab.active, .ps-export-tab.active {
+          background: var(--text);
+          color: var(--bg);
+          border-color: var(--text);
+          box-shadow: var(--shadow-sm);
+        }
+
+        /* Shared Studio Cards, Buttons, Chips, Sliders */
+        .ps-card {
+          background: var(--surface);
+          border: 1px solid var(--border);
+          border-radius: var(--radius);
+          padding: 12px;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+        .ps-section-label {
+          font-family: var(--font-mono);
+          font-size: 0.72rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.06em;
+          color: var(--text-muted);
+        }
+        .ps-btn-row {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 6px;
+          width: 100%;
+        }
+        .ps-btn, .ps-chip {
+          min-height: 44px;
+          padding: 8px 12px;
+          border-radius: var(--radius-sm);
+          border: 1px solid var(--border);
+          background: var(--bg);
+          color: var(--text);
+          font-family: var(--font-sans);
+          font-size: 0.84rem;
+          font-weight: 600;
+          cursor: pointer;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+          text-align: center;
+          white-space: normal;
+          line-height: 1.2;
+          touch-action: manipulation;
+          flex: 1 1 auto;
+        }
+        .ps-btn.ps-primary {
+          background: var(--accent);
+          border-color: var(--accent);
+          color: #FAF8F5;
+          box-shadow: var(--shadow);
+        }
+        .ps-btn.ps-outline {
+          background: var(--surface);
+          border-color: var(--text);
+          color: var(--text);
+        }
+        .ps-chip.active, .ps-btn.active {
+          background: var(--accent);
+          border-color: var(--accent);
+          color: #FAF8F5;
+          box-shadow: var(--shadow-sm);
+        }
+        .ps-btn:disabled, .ps-chip:disabled {
+          opacity: 0.45;
+          cursor: not-allowed;
+        }
+        .ps-btn-compact {
+          flex: 0 1 auto;
+          padding: 8px 10px;
+          font-size: 0.8rem;
+        }
+        .ps-slider-row {
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+          width: 100%;
+        }
+        .ps-slider-head {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 8px;
+          font-size: 0.84rem;
+          color: var(--text);
+        }
+        .ps-mono-val {
+          font-family: var(--font-mono);
+          font-size: 0.78rem;
+          font-weight: 700;
+          color: var(--accent);
+        }
+        .ps-range {
+          width: 100%;
+          min-height: 36px;
+          accent-color: var(--accent);
+          cursor: pointer;
+          touch-action: pan-y;
+        }
+
+        /* Nudge Arrow Pad */
+        .ps-nudge-layout {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+        }
+        .ps-nudge-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 46px);
+          grid-template-rows: repeat(3, 44px);
+          gap: 4px;
+          flex-shrink: 0;
+        }
+        .ps-nudge-btn {
+          min-width: 44px;
+          min-height: 44px;
+          border-radius: var(--radius-sm);
+          border: 1px solid var(--border);
+          background: var(--bg);
+          color: var(--text);
+          font-family: var(--font-mono);
+          font-size: 0.9rem;
+          font-weight: 700;
+          cursor: pointer;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          touch-action: manipulation;
+          user-select: none;
+          -webkit-user-select: none;
+        }
+        .ps-nudge-center {
+          font-size: 0.68rem;
+          border-color: var(--text);
+          background: var(--surface);
+        }
+        .ps-nudge-side {
+          flex: 1 1 140px;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+
+        /* Biometric Checklist & Switch */
+        .ps-toggle-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 10px;
+          min-height: 44px;
+          cursor: pointer;
+          touch-action: manipulation;
+        }
+        .ps-toggle-row input[type="checkbox"] {
+          width: 22px;
+          height: 22px;
+          accent-color: var(--accent);
+          flex-shrink: 0;
+        }
+        .ps-checklist {
+          list-style: none;
+          margin: 0;
+          padding: 8px 10px;
+          background: var(--bg);
+          border: 1px solid var(--border);
+          border-radius: var(--radius-sm);
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+          font-size: 0.8rem;
+          color: var(--text-light);
+        }
+        .ps-checklist li::before {
+          content: "✓ ";
+          color: var(--success);
+          font-family: var(--font-mono);
+          font-weight: 700;
+        }
+
+        /* Background Swatches */
+        .ps-swatches {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 6px;
+          width: 100%;
+        }
+        .ps-swatch-btn {
+          min-height: 44px;
+          padding: 6px 10px;
+          border-radius: var(--radius-sm);
+          border: 1px solid var(--border);
+          background: var(--bg);
+          color: var(--text);
+          font-size: 0.8rem;
+          font-weight: 600;
+          cursor: pointer;
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          touch-action: manipulation;
+          flex: 1 1 92px;
+          justify-content: center;
+        }
+        .ps-swatch-btn.active {
+          border: 2px solid var(--accent);
+          background: var(--accent-light);
+        }
+        .ps-swatch-dot {
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          border: 1px solid rgba(0, 0, 0, 0.25);
+          flex-shrink: 0;
+        }
+        .ps-color-picker-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 8px;
+          flex-wrap: wrap;
+        }
+        .ps-color-input {
+          width: 52px;
+          height: 44px;
+          padding: 3px;
+          border-radius: var(--radius-sm);
+          border: 1px solid var(--border);
+          background: var(--input-bg);
+          cursor: pointer;
+        }
+
+        /* Inline Feedback Messages */
+        .ps-inline-msg {
+          display: none;
+          padding: 8px 10px;
+          border-radius: var(--radius-sm);
+          font-size: 0.82rem;
+          line-height: 1.4;
+          border: 1px solid var(--border);
+          background: var(--bg);
+          color: var(--text);
+          overflow-wrap: anywhere;
+        }
+        .ps-msg-info {
+          border-color: var(--accent);
+          background: var(--accent-light);
+          color: var(--text);
+        }
+        .ps-msg-ok {
+          border-color: var(--success);
+          color: var(--success);
+        }
+        .ps-msg-warn {
+          border-color: var(--warning);
+          color: var(--warning);
+        }
+        .ps-msg-error {
+          border-color: var(--error);
+          color: var(--error);
+        }
+        .ps-readout-box {
+          padding: 10px 12px;
+          border-radius: var(--radius-sm);
+          background: var(--bg);
+          border: 1px solid var(--border);
+          font-family: var(--font-mono);
+          font-size: 0.8rem;
+          font-weight: 600;
+          color: var(--text);
+          text-align: center;
+          overflow-wrap: anywhere;
+        }
+        .ps-note-line {
+          font-size: 0.78rem;
+          color: var(--text-light);
+          line-height: 1.4;
+        }
+
+        /* Export Views */
+        .ps-single-preview-box {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 8px;
+          padding: 12px;
+          background: var(--bg);
+          border: 1px solid var(--border);
+          border-radius: var(--radius);
+        }
+        #ps-single-preview {
+          max-width: 180px;
+          max-height: 220px;
+          width: auto;
+          height: auto;
+          border: 1px solid var(--border);
+          box-shadow: var(--shadow);
+          background: #FFFFFF;
+          display: block;
+        }
+        .ps-input-grid {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+          width: 100%;
+        }
+        .ps-field {
+          flex: 1 1 120px;
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+        }
+        .ps-field label {
+          font-family: var(--font-mono);
+          font-size: 0.72rem;
+          color: var(--text-light);
+        }
+        .ps-field input, .ps-field select {
+          width: 100%;
+          min-height: 44px;
+          padding: 8px 10px;
+          border-radius: var(--radius-sm);
+          border: 1px solid var(--input-border);
+          background: var(--input-bg);
+          color: var(--text);
+          font-family: var(--font-mono);
+          font-size: 0.86rem;
+        }
+        .ps-sheet-preview-shell {
+          background: var(--bg);
+          border: 1px solid var(--border);
+          border-radius: var(--radius);
+          padding: 10px;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+        .ps-sheet-chip {
+          font-family: var(--font-mono);
+          font-size: 0.76rem;
+          font-weight: 700;
+          color: var(--accent);
+          background: var(--accent-light);
+          border: 1px solid var(--accent);
+          border-radius: 4px;
+          padding: 6px 10px;
+          text-align: center;
+          overflow-wrap: anywhere;
+        }
+        .ps-sheet-preview-wrap {
+          width: 100%;
+          max-height: 360px;
+          overflow: auto;
+          display: flex;
+          justify-content: center;
+          align-items: flex-start;
+          padding: 8px;
+          background: rgba(0, 0, 0, 0.06);
+          border-radius: var(--radius-sm);
+        }
+        #ps-sheet-preview {
+          display: block;
+          box-shadow: var(--shadow-md);
+          border: 1px solid var(--border);
+          background: #FFFFFF;
+        }
+        .ps-nav-footer {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+          justify-content: space-between;
+          padding-top: 6px;
+        }
+
+        /* Grouped Size Bottom Sheet Modal */
+        .ps-sheet-modal {
+          position: fixed;
+          inset: 0;
+          z-index: 10050;
+          background: rgba(20, 20, 19, 0.58);
+          display: none;
+          align-items: flex-end;
+          justify-content: center;
+          padding: 12px 12px 0 12px;
+        }
+        .ps-sheet-modal.active {
+          display: flex;
+        }
+        .ps-sheet-modal-card {
+          width: 100%;
+          max-width: 560px;
+          max-height: 85vh;
+          background: var(--surface);
+          color: var(--text);
+          border: 1.5px solid var(--text);
+          border-bottom: none;
+          border-radius: 16px 16px 0 0;
+          box-shadow: var(--shadow-md);
+          display: flex;
+          flex-direction: column;
+          overflow: hidden;
+        }
+        .ps-sheet-modal-head {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 10px;
+          padding: 14px 16px;
+          border-bottom: 1px solid var(--border);
+        }
+        .ps-sheet-modal-head h3 {
+          font-family: var(--font-serif);
+          font-size: 1.45rem;
+          font-weight: 400;
+          margin: 0;
+          color: var(--text);
+        }
+        .ps-sheet-modal-body {
+          overflow-y: auto;
+          padding: 14px 16px 24px 16px;
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
+        }
+        .ps-sheet-group-title {
+          font-family: var(--font-mono);
+          font-size: 0.72rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.06em;
+          color: var(--text-muted);
+          margin-bottom: 6px;
+        }
+        .ps-size-preset-grid {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+        }
+        .ps-size-preset-item {
+          width: 100%;
+          min-height: 52px;
+          padding: 10px 12px;
+          border-radius: var(--radius);
+          border: 1px solid var(--border);
+          background: var(--bg);
+          color: var(--text);
+          text-align: left;
+          cursor: pointer;
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
+          touch-action: manipulation;
+        }
+        .ps-size-preset-item.active {
+          border: 2px solid var(--accent);
+          background: var(--accent-light);
+        }
+        .ps-size-preset-top {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 8px;
+          flex-wrap: wrap;
+        }
+        .ps-size-preset-name {
+          font-weight: 700;
+          font-size: 0.92rem;
+          color: var(--text);
+        }
+        .ps-size-preset-px {
+          font-family: var(--font-mono);
+          font-size: 0.74rem;
+          color: var(--accent);
+          font-weight: 700;
+        }
+        .ps-size-preset-note {
+          font-size: 0.78rem;
+          color: var(--text-light);
+        }
+
+        @media (hover: hover) {
+          .ps-btn.ps-primary:hover,
+          .ps-file-trigger:hover {
+            background: var(--accent-hover);
+            border-color: var(--accent-hover);
+          }
+          .ps-file-trigger.ps-secondary:hover,
+          .ps-btn:not(.ps-primary):hover,
+          .ps-chip:not(.active):hover,
+          .ps-size-preset-item:not(.active):hover {
+            background: var(--surface-hover);
+            border-color: var(--text);
           }
         }
     </style>
@@ -4525,28 +5297,396 @@
             </div>
         </div>
 
-        <!-- PASSPORT PHOTO -->
+        <!-- PASSPORT PHOTO STUDIO -->
         <div id="passport" class="tool-panel">
-            <h3><span class="emoji"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></span> Make Passport Size Photo</h3>
-            <div class="upload-box" id="passport-upload-box"><input type="file" id="passport-input" accept="image/*" aria-label="Select photo for passport size generator" onchange="handlePassportUpload(this)" /><div><svg class="upload-icon-svg" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><div><strong>Select Photo</strong></div></div>
-            <div id="passport-editor" style="display: none;">
-                <div style="margin-bottom: 15px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-                    <div id="pcard-1" role="button" tabindex="0" aria-label="Select 35 by 45 mm passport photo size for Europe, India, UK" onclick="selectPassportCard(1, 3.5, 4.5)" style="border: 2px solid var(--accent); padding: 10px; border-radius: 6px; cursor: pointer; background: var(--surface); width: 130px; text-align: center;">
-                        <span id="pbadge-1" style="font-size: 0.75rem; color: var(--accent); font-weight: bold; font-family: 'JetBrains Mono', monospace;">✓ 35x45 mm</span>
-                        <div style="font-size: 0.75rem; color: var(--text-light);">Europe, India, UK</div>
-                    </div>
-                    <div id="pcard-2" role="button" tabindex="0" aria-label="Select 2 by 2 inch passport photo size for USA, Canada" onclick="selectPassportCard(2, 5.08, 5.08)" style="border: 1px solid var(--border); padding: 10px; border-radius: 6px; cursor: pointer; background: var(--surface); width: 130px; text-align: center;">
-                        <span id="pbadge-2" style="font-size: 0.75rem; color: var(--accent); font-weight: bold; font-family: 'JetBrains Mono', monospace; display: none;">✓ 2x2 Inch</span>
-                        <div style="font-size: 0.75rem; color: var(--text-light);">USA, Canada</div>
+            <div class="ps-studio">
+                <div class="ps-header-bar">
+                    <h3 class="ps-header-title">
+                        <span class="emoji"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></span>
+                        <span>Passport Photo Maker</span>
+                    </h3>
+                    <button type="button" id="ps-startover-btn" class="ps-btn ps-outline ps-btn-compact" style="display: none;" aria-label="Start over and clear photo">Start over</button>
+                </div>
+
+                <!-- 3-Step Flow Stepper -->
+                <div class="ps-stepper" role="tablist" aria-label="Passport photo workflow steps">
+                    <button type="button" class="ps-stepper-btn active" data-step="1" aria-current="step"><span class="ps-step-num">1</span><span>Upload</span></button>
+                    <button type="button" class="ps-stepper-btn" data-step="2" disabled><span class="ps-step-num">2</span><span>Edit</span></button>
+                    <button type="button" class="ps-stepper-btn" data-step="3" disabled><span class="ps-step-num">3</span><span>Export</span></button>
+                </div>
+
+                <!-- STEP 1: UPLOAD -->
+                <div id="ps-step-1">
+                    <div class="ps-upload-card">
+                        <svg class="upload-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        <h4 class="ps-upload-title">Choose a Portrait Photo</h4>
+                        <p class="ps-upload-sub">Pick a photo from your gallery or take one with your camera. Everything runs locally on your device.</p>
+                        <div class="ps-upload-actions">
+                            <label class="ps-file-trigger">
+                                <input type="file" id="passport-input" accept="image/*" aria-label="Choose photo from gallery" />
+                                <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                                <span>Choose from Gallery</span>
+                            </label>
+                            <label id="ps-camera-btn-wrap" class="ps-file-trigger ps-secondary">
+                                <input type="file" id="ps-camera-input" accept="image/*" capture="user" aria-label="Take photo with camera" />
+                                <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                                <span>Take Photo</span>
+                            </label>
+                        </div>
+                        <span class="ps-privacy-pill">100% On-Device · Photos Never Uploaded</span>
+                        <div id="ps-upload-status" class="ps-inline-msg" role="status" aria-live="polite"></div>
                     </div>
                 </div>
-                <div style="max-height: 50vh; overflow: hidden; display: flex; justify-content: center; align-items: center; background: rgba(0,0,0,0.03); border-radius: 6px; border: 1px solid var(--border);">
-                    <img id="passport-image" style="max-width: 100%; display: block;" alt="Passport photo preview" src="" />
+
+                <!-- STEP 2: EDIT -->
+                <div id="ps-step-2" style="display: none;">
+                    <!-- Sticky Fixed-Aspect Crop Viewport & Compact Tab Bar -->
+                    <div class="ps-sticky-viewport">
+                        <div class="ps-canvas-wrap" id="ps-canvas-wrap">
+                            <canvas id="ps-crop-canvas" aria-label="Interactive passport photo crop canvas"></canvas>
+                            <div id="ps-brush-canvas-badge" class="ps-brush-canvas-badge" aria-live="polite"></div>
+                        </div>
+
+                        <div class="ps-canvas-meta-row">
+                            <button type="button" id="ps-canvas-size-chip" class="ps-size-chip-btn" aria-label="Change photo size">35 × 45 mm · 413×531 px</button>
+                            <button type="button" id="ps-autofit-btn" class="ps-btn ps-outline ps-btn-compact" aria-label="Auto fit face to guides">Auto fit face</button>
+                        </div>
+                        <div id="ps-autofit-note" class="ps-inline-msg" role="status" aria-live="polite" style="margin-top: 6px;"></div>
+
+                        <div class="ps-edit-tabs" role="tablist" aria-label="Edit studio tools">
+                            <button type="button" class="ps-edit-tab active" data-tab="crop" role="tab" aria-selected="true">Crop</button>
+                            <button type="button" class="ps-edit-tab" data-tab="size" role="tab" aria-selected="false">Size</button>
+                            <button type="button" class="ps-edit-tab" data-tab="bg" role="tab" aria-selected="false">Background</button>
+                            <button type="button" class="ps-edit-tab" data-tab="retouch" role="tab" aria-selected="false">Retouch</button>
+                        </div>
+                    </div>
+
+                    <!-- TAB 1: CROP & POSITION -->
+                    <div class="ps-edit-pane" data-pane="crop" style="margin-top: 10px;">
+                        <div class="ps-card">
+                            <div class="ps-section-label">Transform</div>
+                            <div class="ps-btn-row">
+                                <button type="button" id="ps-rot-left" class="ps-btn ps-btn-compact" aria-label="Rotate left 90 degrees">↺ 90°</button>
+                                <button type="button" id="ps-rot-right" class="ps-btn ps-btn-compact" aria-label="Rotate right 90 degrees">↻ 90°</button>
+                                <button type="button" id="ps-flip-h" class="ps-btn ps-btn-compact" aria-label="Flip horizontal">⇄ Flip</button>
+                                <button type="button" id="ps-zoom-out" class="ps-btn ps-btn-compact" aria-label="Zoom out">− Zoom</button>
+                                <button type="button" id="ps-zoom-in" class="ps-btn ps-btn-compact" aria-label="Zoom in">+ Zoom</button>
+                                <button type="button" id="ps-crop-reset" class="ps-btn ps-outline ps-btn-compact" aria-label="Reset crop and rotation">Reset</button>
+                            </div>
+
+                            <div class="ps-slider-row">
+                                <div class="ps-slider-head">
+                                    <label for="ps-straighten-slider">Straighten</label>
+                                    <span id="ps-straighten-val" class="ps-mono-val">0.0°</span>
+                                </div>
+                                <input type="range" id="ps-straighten-slider" class="ps-range" min="-15" max="15" step="0.5" value="0" aria-label="Straighten angle from minus 15 to plus 15 degrees" />
+                            </div>
+                        </div>
+
+                        <div class="ps-card" style="margin-top: 10px;">
+                            <div class="ps-section-label">Position &amp; Nudge (1% Steps · Hold to Repeat)</div>
+                            <div class="ps-nudge-layout">
+                                <div class="ps-nudge-grid" role="group" aria-label="Nudge position arrow pad">
+                                    <span></span>
+                                    <button type="button" id="ps-nudge-up" class="ps-nudge-btn" aria-label="Nudge photo up">↑</button>
+                                    <span></span>
+                                    <button type="button" id="ps-nudge-left" class="ps-nudge-btn" aria-label="Nudge photo left">←</button>
+                                    <button type="button" id="ps-center-btn" class="ps-nudge-btn ps-nudge-center" aria-label="Center photo">CTR</button>
+                                    <button type="button" id="ps-nudge-right" class="ps-nudge-btn" aria-label="Nudge photo right">→</button>
+                                    <span></span>
+                                    <button type="button" id="ps-nudge-down" class="ps-nudge-btn" aria-label="Nudge photo down">↓</button>
+                                    <span></span>
+                                </div>
+                                <div class="ps-nudge-side">
+                                    <div class="ps-slider-row">
+                                        <div class="ps-slider-head">
+                                            <label for="ps-scale-slider">Scale</label>
+                                            <span id="ps-scale-val" class="ps-mono-val">1.00×</span>
+                                        </div>
+                                        <input type="range" id="ps-scale-slider" class="ps-range" min="1" max="5" step="0.01" value="1" aria-label="Photo zoom scale" />
+                                    </div>
+                                    <p class="ps-note-line">Drag with 1 finger to pan, pinch with 2 fingers to zoom.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="ps-card" style="margin-top: 10px;">
+                            <label class="ps-toggle-row" for="ps-guides-toggle">
+                                <span><strong>Biometric Guide Overlay</strong> <span class="ps-note-line">(never exported)</span></span>
+                                <input type="checkbox" id="ps-guides-toggle" checked />
+                            </label>
+                            <ul class="ps-checklist" aria-label="Passport photo checklist">
+                                <li>Plain light background with even lighting</li>
+                                <li>Face clearly visible, neutral expression, eyes open</li>
+                                <li>Head fills about 70% to 80% of the photo height</li>
+                                <li>No sunglasses and no harsh shadows</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- TAB 2: SIZE & DPI -->
+                    <div class="ps-edit-pane" data-pane="size" style="display: none; margin-top: 10px;">
+                        <div class="ps-card">
+                            <div class="ps-section-label">Photo Size Preset</div>
+                            <button type="button" id="ps-open-size-sheet" class="ps-btn ps-outline" style="justify-content: space-between;" aria-label="Open grouped photo size selector">
+                                <span id="ps-size-current-label">35 × 45 mm (35 × 45 mm)</span>
+                                <span style="font-family: var(--font-mono); font-size: 0.78rem;">Change ▾</span>
+                            </button>
+
+                            <div class="ps-section-label" style="margin-top: 4px;">Print Resolution (DPI)</div>
+                            <div class="ps-btn-row" role="group" aria-label="DPI resolution">
+                                <button type="button" class="ps-chip ps-dpi-btn" data-dpi="150">150 DPI</button>
+                                <button type="button" class="ps-chip ps-dpi-btn active" data-dpi="300">300 DPI</button>
+                                <button type="button" class="ps-chip ps-dpi-btn" data-dpi="600">600 DPI</button>
+                            </div>
+
+                            <div id="ps-size-px-readout" class="ps-readout-box">413 × 531 px at 300 DPI (35 × 45 mm)</div>
+                            <p class="ps-note-line">Sizes are common values. Always check the exact rule of your form or office.</p>
+                        </div>
+                    </div>
+
+                    <!-- TAB 3: BACKGROUND -->
+                    <div class="ps-edit-pane" data-pane="bg" style="display: none; margin-top: 10px;">
+                        <div class="ps-card">
+                            <div class="ps-section-label">Background Mode</div>
+                            <div class="ps-btn-row" role="group" aria-label="Background replacement mode">
+                                <button type="button" class="ps-chip ps-bg-mode-btn active" data-bgmode="original">Keep original</button>
+                                <button type="button" class="ps-chip ps-bg-mode-btn" data-bgmode="plain">Plain wall</button>
+                                <button type="button" class="ps-chip ps-bg-mode-btn" data-bgmode="smart">Smart cut-out</button>
+                            </div>
+                            <div id="ps-bg-status" class="ps-inline-msg" role="status" aria-live="polite"></div>
+
+                            <div class="ps-section-label" style="margin-top: 4px;">Background Colour</div>
+                            <div id="ps-bg-swatches" class="ps-swatches"></div>
+                            <div class="ps-color-picker-row">
+                                <label for="ps-bg-custom-color" style="font-size: 0.84rem; color: var(--text);">Custom colour</label>
+                                <input type="color" id="ps-bg-custom-color" class="ps-color-input" value="#FFFFFF" aria-label="Custom background colour picker" />
+                            </div>
+
+                            <!-- Plain Wall Sliders -->
+                            <div id="ps-plain-controls" style="display: none; border-top: 1px solid var(--border); padding-top: 10px;">
+                                <div class="ps-slider-row">
+                                    <div class="ps-slider-head">
+                                        <label for="ps-plain-tol">Wall Tolerance</label>
+                                        <span id="ps-plain-tol-val" class="ps-mono-val">35</span>
+                                    </div>
+                                    <input type="range" id="ps-plain-tol" class="ps-range" min="10" max="80" step="1" value="35" aria-label="Plain wall colour tolerance" />
+                                </div>
+                                <div class="ps-slider-row">
+                                    <div class="ps-slider-head">
+                                        <label for="ps-plain-feather">Edge Feather</label>
+                                        <span id="ps-plain-feather-val" class="ps-mono-val">2 px</span>
+                                    </div>
+                                    <input type="range" id="ps-plain-feather" class="ps-range" min="0" max="6" step="0.5" value="2" aria-label="Plain wall edge feather" />
+                                </div>
+                            </div>
+
+                            <!-- Smart Cut-out Sliders -->
+                            <div id="ps-smart-controls" style="display: none; border-top: 1px solid var(--border); padding-top: 10px;">
+                                <div class="ps-slider-row">
+                                    <div class="ps-slider-head">
+                                        <label for="ps-smart-thresh">Edge: Looser ← → Tighter</label>
+                                        <span id="ps-smart-thresh-val" class="ps-mono-val">50%</span>
+                                    </div>
+                                    <input type="range" id="ps-smart-thresh" class="ps-range" min="10" max="90" step="1" value="50" aria-label="Smart cut-out edge threshold" />
+                                </div>
+                                <div class="ps-slider-row">
+                                    <div class="ps-slider-head">
+                                        <label for="ps-smart-feather">Edge Feather</label>
+                                        <span id="ps-smart-feather-val" class="ps-mono-val">1.5 px</span>
+                                    </div>
+                                    <input type="range" id="ps-smart-feather" class="ps-range" min="0" max="6" step="0.5" value="1.5" aria-label="Smart cut-out edge feather" />
+                                </div>
+                            </div>
+
+                            <!-- Fix Edges Brush -->
+                            <div id="ps-brush-section" style="display: none; border-top: 1px solid var(--border); padding-top: 10px;">
+                                <div class="ps-btn-row">
+                                    <button type="button" id="ps-brush-toggle" class="ps-btn ps-outline">Fix edges brush</button>
+                                </div>
+                                <div id="ps-brush-controls" style="display: none; flex-direction: column; gap: 8px; margin-top: 8px;">
+                                    <div class="ps-btn-row">
+                                        <button type="button" class="ps-chip ps-brush-mode-btn active" data-bmode="erase">Erase bg</button>
+                                        <button type="button" class="ps-chip ps-brush-mode-btn" data-bmode="restore">Restore subject</button>
+                                    </div>
+                                    <div class="ps-btn-row">
+                                        <button type="button" class="ps-chip ps-brush-size-btn" data-bsize="S">S</button>
+                                        <button type="button" class="ps-chip ps-brush-size-btn active" data-bsize="M">M</button>
+                                        <button type="button" class="ps-chip ps-brush-size-btn" data-bsize="L">L</button>
+                                        <button type="button" id="ps-brush-undo" class="ps-btn ps-outline" disabled>Undo</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB 4: RETOUCH -->
+                    <div class="ps-edit-pane" data-pane="retouch" style="display: none; margin-top: 10px;">
+                        <div class="ps-card">
+                            <div class="ps-section-label">Live Retouch</div>
+                            <div class="ps-slider-row">
+                                <div class="ps-slider-head">
+                                    <label for="ps-ret-brightness">Brightness</label>
+                                    <span id="ps-ret-brightness-val" class="ps-mono-val">100%</span>
+                                </div>
+                                <input type="range" id="ps-ret-brightness" class="ps-range" min="50" max="150" step="1" value="100" aria-label="Brightness 50 to 150 percent" />
+                            </div>
+                            <div class="ps-slider-row">
+                                <div class="ps-slider-head">
+                                    <label for="ps-ret-contrast">Contrast</label>
+                                    <span id="ps-ret-contrast-val" class="ps-mono-val">100%</span>
+                                </div>
+                                <input type="range" id="ps-ret-contrast" class="ps-range" min="50" max="150" step="1" value="100" aria-label="Contrast 50 to 150 percent" />
+                            </div>
+                            <div class="ps-slider-row">
+                                <div class="ps-slider-head">
+                                    <label for="ps-ret-saturation">Saturation</label>
+                                    <span id="ps-ret-saturation-val" class="ps-mono-val">100%</span>
+                                </div>
+                                <input type="range" id="ps-ret-saturation" class="ps-range" min="50" max="150" step="1" value="100" aria-label="Saturation 50 to 150 percent" />
+                            </div>
+                            <div class="ps-btn-row" style="margin-top: 4px;">
+                                <button type="button" id="ps-auto-enhance-btn" class="ps-btn ps-outline">Auto enhance</button>
+                                <button type="button" id="ps-retouch-reset" class="ps-btn">Reset</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ps-nav-footer" style="margin-top: 12px;">
+                        <button type="button" id="ps-edit-back-btn" class="ps-btn ps-outline">← Back</button>
+                        <button type="button" id="ps-edit-next-btn" class="ps-btn ps-primary">Next: Export →</button>
+                    </div>
                 </div>
-                <div style="display: flex; gap: 15px; margin-top: 15px;">
-                    <button class="btn" onclick="resetPassport()" aria-label="Reset passport cropping" style="flex: 1; background: var(--glass); color: var(--text); border: 1px solid var(--text);"><svg class="icon-svg" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Reset</button>
-                    <button class="btn" onclick="downloadPassportCropped()" aria-label="Download single passport photo" style="flex: 1;"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Single Photo</button>
-                    <button class="btn" onclick="generatePassportA4()" aria-label="Generate and download A4 sheet grid of passport photos" style="flex: 2; background: var(--success);"><svg class="icon-svg" viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> A4 Sheet Grid</button>
+
+                <!-- STEP 3: EXPORT -->
+                <div id="ps-step-3" style="display: none;">
+                    <div class="ps-btn-row" role="tablist" aria-label="Export mode">
+                        <button type="button" class="ps-export-tab active" data-etab="single" role="tab" aria-selected="true">Single Photo</button>
+                        <button type="button" class="ps-export-tab" data-etab="sheet" role="tab" aria-selected="false">Print Sheet</button>
+                    </div>
+
+                    <!-- EXPORT: SINGLE PHOTO -->
+                    <div id="ps-export-single" style="margin-top: 10px;">
+                        <div class="ps-card">
+                            <div class="ps-single-preview-box">
+                                <canvas id="ps-single-preview" aria-label="Cropped single passport photo preview"></canvas>
+                                <div id="ps-single-meta" class="ps-readout-box" style="width: 100%;">413 × 531 px · 300 DPI</div>
+                                <div id="ps-single-resize-warn" class="ps-inline-msg ps-msg-warn" style="width: 100%;"></div>
+                            </div>
+
+                            <div class="ps-section-label">Format</div>
+                            <div class="ps-btn-row">
+                                <button type="button" class="ps-chip ps-fmt-btn active" data-fmt="image/jpeg">JPG (with DPI)</button>
+                                <button type="button" class="ps-chip ps-fmt-btn" data-fmt="image/png">PNG (Lossless)</button>
+                            </div>
+
+                            <label class="ps-toggle-row" for="ps-kb-toggle" style="border-top: 1px solid var(--border); padding-top: 8px;">
+                                <span><strong>Target file size (KB)</strong> <span class="ps-note-line">(JPG)</span></span>
+                                <input type="checkbox" id="ps-kb-toggle" />
+                            </label>
+                            <div id="ps-kb-controls" style="display: none;">
+                                <div id="ps-kb-png-note" class="ps-inline-msg ps-msg-warn" style="margin-bottom: 6px;">Target KB applies to JPG format.</div>
+                                <div class="ps-btn-row">
+                                    <button type="button" class="ps-chip ps-kb-chip" data-kb="20">20 KB</button>
+                                    <button type="button" class="ps-chip ps-kb-chip" data-kb="50">50 KB</button>
+                                    <button type="button" class="ps-chip ps-kb-chip" data-kb="100">100 KB</button>
+                                    <button type="button" class="ps-chip ps-kb-chip" data-kb="200">200 KB</button>
+                                </div>
+                                <div class="ps-field" style="margin-top: 8px;">
+                                    <label for="ps-kb-input">Custom target (5 – 5000 KB)</label>
+                                    <input type="number" id="ps-kb-input" min="5" max="5000" step="1" value="50" />
+                                </div>
+                            </div>
+
+                            <div class="ps-btn-row" style="margin-top: 6px;">
+                                <button type="button" id="ps-single-download" class="ps-btn ps-primary">⬇ Download</button>
+                                <button type="button" id="ps-single-share" class="ps-btn ps-outline">Share</button>
+                            </div>
+                            <div id="ps-single-status" class="ps-inline-msg" role="status" aria-live="polite"></div>
+                        </div>
+                    </div>
+
+                    <!-- EXPORT: PRINT SHEET -->
+                    <div id="ps-export-sheet" style="display: none; margin-top: 10px;">
+                        <div class="ps-card">
+                            <div class="ps-sheet-preview-shell">
+                                <div id="ps-sheet-chip" class="ps-sheet-chip">A4 Portrait · 30 photos · 35 × 45 mm</div>
+                                <div class="ps-btn-row" style="justify-content: center;">
+                                    <button type="button" id="ps-sheet-zoom-out" class="ps-btn ps-btn-compact" aria-label="Zoom out print sheet preview">−</button>
+                                    <button type="button" id="ps-sheet-zoom-fit" class="ps-btn ps-btn-compact" aria-label="Fit print sheet preview">Fit (<span id="ps-sheet-zoom-val">100%</span>)</button>
+                                    <button type="button" id="ps-sheet-zoom-in" class="ps-btn ps-btn-compact" aria-label="Zoom in print sheet preview">+</button>
+                                </div>
+                                <div id="ps-sheet-preview-wrap" class="ps-sheet-preview-wrap">
+                                    <canvas id="ps-sheet-preview" aria-label="Live print sheet preview"></canvas>
+                                </div>
+                            </div>
+
+                            <div class="ps-section-label">Paper Size</div>
+                            <div class="ps-btn-row">
+                                <button type="button" class="ps-chip ps-paper-btn active" data-paper="a4">A4</button>
+                                <button type="button" class="ps-chip ps-paper-btn" data-paper="letter">Letter</button>
+                                <button type="button" class="ps-chip ps-paper-btn" data-paper="4x6">4 × 6 in</button>
+                                <button type="button" class="ps-chip ps-paper-btn" data-paper="5x7">5 × 7 in</button>
+                            </div>
+
+                            <div class="ps-section-label">Orientation</div>
+                            <div class="ps-btn-row">
+                                <button type="button" class="ps-chip ps-orient-btn active" data-orient="auto">Auto</button>
+                                <button type="button" class="ps-chip ps-orient-btn" data-orient="portrait">Portrait</button>
+                                <button type="button" class="ps-chip ps-orient-btn" data-orient="landscape">Landscape</button>
+                            </div>
+
+                            <div class="ps-input-grid">
+                                <div class="ps-field">
+                                    <label for="ps-sheet-margin">Margin (mm)</label>
+                                    <input type="number" id="ps-sheet-margin" min="0" max="30" step="0.5" value="5" />
+                                </div>
+                                <div class="ps-field">
+                                    <label for="ps-sheet-gap">Gap (mm)</label>
+                                    <input type="number" id="ps-sheet-gap" min="0" max="20" step="0.5" value="2" />
+                                </div>
+                            </div>
+
+                            <div class="ps-section-label">Photos per Sheet</div>
+                            <div class="ps-btn-row">
+                                <button type="button" class="ps-chip ps-count-mode-btn active" data-cmode="fill">Fill page</button>
+                                <button type="button" class="ps-chip ps-count-mode-btn" data-cmode="custom">Custom count</button>
+                            </div>
+                            <div id="ps-sheet-count-wrap" class="ps-field" style="display: none;">
+                                <label for="ps-sheet-count">Number of photos (1 – 60)</label>
+                                <input type="number" id="ps-sheet-count" min="1" max="60" step="1" value="8" />
+                            </div>
+
+                            <div class="ps-section-label">Border Style</div>
+                            <div class="ps-btn-row">
+                                <button type="button" class="ps-chip ps-border-btn" data-border="none">None</button>
+                                <button type="button" class="ps-chip ps-border-btn active" data-border="thin">Thin grey</button>
+                                <button type="button" class="ps-chip ps-border-btn" data-border="cutmarks">Cut marks</button>
+                            </div>
+
+                            <div class="ps-section-label">Caption Under Each Photo (Optional)</div>
+                            <div class="ps-field">
+                                <label for="ps-sheet-caption-name">Name / Label</label>
+                                <input type="text" id="ps-sheet-caption-name" maxlength="40" placeholder="e.g. A. Sharma" />
+                            </div>
+                            <label class="ps-toggle-row" for="ps-sheet-caption-date">
+                                <span>Include today's date</span>
+                                <input type="checkbox" id="ps-sheet-caption-date" />
+                            </label>
+
+                            <div class="ps-btn-row" style="margin-top: 6px;">
+                                <button type="button" id="ps-sheet-export-pdf" class="ps-btn ps-primary">⬇ PDF Sheet</button>
+                                <button type="button" id="ps-sheet-export-jpg" class="ps-btn ps-outline">JPG (300 DPI)</button>
+                                <button type="button" id="ps-sheet-export-png" class="ps-btn ps-outline">PNG (300 DPI)</button>
+                                <button type="button" id="ps-sheet-share" class="ps-btn ps-outline">Share PDF</button>
+                            </div>
+                            <div id="ps-sheet-status" class="ps-inline-msg" role="status" aria-live="polite"></div>
+                        </div>
+                    </div>
+
+                    <div class="ps-nav-footer" style="margin-top: 12px;">
+                        <button type="button" id="ps-export-back-btn" class="ps-btn ps-outline">← Back to Edit</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -5295,7 +6435,7 @@
             { id: 'pngsuite', title: 'Advanced PNG Suite', displayTitle: 'Advanced<br>PNG Suite', category: 'Image Tools', cat: 'image', format: 'PNG / WEBP / JPG', icon: '<svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>', desc: 'All-in-one suite for PNG transparency, optimization, and conversion.', isConverter: true },
             { id: 'cropimg', title: 'Crop Image', displayTitle: 'Crop<br>Image', category: 'Image Tools', cat: 'image', format: 'PNG / JPG', icon: '<svg viewBox="0 0 24 24"><path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M18 22V8a2 2 0 0 0-2-2H2"/></svg>', desc: 'Crop pictures online with freeform or standard ratios (1:1, 4:5, 16:9).' },
             { id: 'resizeimg', title: 'Resize Image', displayTitle: 'Resize<br>Image', category: 'Image Tools', cat: 'image', format: 'PX / %', icon: '<svg viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>', desc: 'Scale image dimensions in pixels or percentage with aspect ratio lock.' },
-            { id: 'passport', title: 'Passport Photo Maker', displayTitle: 'Passport<br>Photo Maker', category: 'Image Tools', cat: 'image', format: '300 DPI / A4', icon: '<svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>', desc: 'Create standard biometric passport photos with A4 print sheet grid.', badge: 'Popular' },
+            { id: 'passport', title: 'Passport Photo Maker', displayTitle: 'Passport<br>Photo Maker', category: 'Image Tools', cat: 'image', format: '300 DPI / A4', icon: '<svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>', desc: 'Make passport, visa and ID photos with crop guides, background colour, exact sizes and print sheets.', badge: 'Popular' },
             { id: 'imgcompress', title: 'Compress Images', displayTitle: 'Compress<br>Images', category: 'Image Tools', cat: 'image', format: 'JPG / WEBP', icon: '<svg viewBox="0 0 24 24"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="14" y1="10" x2="21" y2="3"/><line x1="3" y1="21" x2="10" y2="14"/></svg>', desc: 'Compress JPEG, PNG, and WebP images with custom target KB control.', isConverter: true },
             { id: 'imgtokb', title: 'Photo to KB Converter', displayTitle: 'Photo to<br>KB Converter', category: 'Image Tools', cat: 'image', format: 'TARGET KB', icon: '🎯', desc: 'Resize a photo or signature to an exact size in KB (20, 50, 100, 200 KB) for exam and form uploads.', badge: 'New', isConverter: true },
             { id: 'joinimg', title: 'Photo Collage & Joiner', displayTitle: 'Photo<br>Collage', category: 'Image Tools', cat: 'image', format: 'PNG', icon: '<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="12" y1="3" x2="12" y2="21"/></svg>', desc: 'Combine multiple images side-by-side or stacked in a collage layout.' },
@@ -6113,11 +7253,7 @@
                     return true;
                 }
 
-                const passportEditor = document.getElementById("passport-editor");
-                if (passportEditor && passportEditor.style.display !== "none") {
-                    passportEditor.style.display = "none";
-                    const pBox = document.getElementById("passport-upload-box");
-                    if (pBox) pBox.style.display = "block";
+                if (window.PassportStudio && typeof window.PassportStudio.handleBack === 'function' && window.PassportStudio.handleBack()) {
                     return true;
                 }
 
@@ -6845,6 +7981,43 @@
         </div>
     </div>
 
+    <!-- PASSPORT STUDIO GROUPED SIZE BOTTOM SHEET -->
+    <div id="ps-size-sheet" class="ps-sheet-modal" role="dialog" aria-modal="true" aria-labelledby="ps-size-sheet-title" aria-hidden="true">
+        <div class="ps-sheet-modal-card">
+            <div class="ps-sheet-modal-head">
+                <h3 id="ps-size-sheet-title">Choose Photo Size</h3>
+                <button type="button" id="ps-size-sheet-close" class="ps-btn ps-outline ps-btn-compact" aria-label="Close size picker">✕ Close</button>
+            </div>
+            <div class="ps-sheet-modal-body">
+                <div id="ps-size-sheet-list"></div>
+                <div style="border-top: 1px solid var(--border); padding-top: 12px;">
+                    <div class="ps-sheet-group-title">Custom Size</div>
+                    <div class="ps-input-grid">
+                        <div class="ps-field">
+                            <label for="ps-custom-w">Width</label>
+                            <input type="number" id="ps-custom-w" min="5" max="300" step="0.1" value="35" />
+                        </div>
+                        <div class="ps-field">
+                            <label for="ps-custom-h">Height</label>
+                            <input type="number" id="ps-custom-h" min="5" max="300" step="0.1" value="45" />
+                        </div>
+                        <div class="ps-field">
+                            <label for="ps-custom-unit">Unit</label>
+                            <select id="ps-custom-unit">
+                                <option value="mm">mm</option>
+                                <option value="cm">cm</option>
+                                <option value="inch">inch</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="button" id="ps-apply-custom-size" class="ps-btn ps-primary" style="width: 100%; margin-top: 10px;">Apply Custom Size</button>
+                </div>
+                <p class="ps-note-line">Sizes are common values. Always check the exact rule of your form or office.</p>
+            </div>
+        </div>
+    </div>
+
     <script src="js/app.js"></script>
+    <script src="js/passport-studio.js"></script>
 </body>
 </html>
